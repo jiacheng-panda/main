@@ -34,6 +34,7 @@
 <li><a href="#proposed-data-encryption">3.3. [Proposed] Data Encryption</a></li>
 <li><a href="#logging">3.4. Logging</a></li>
 <li><a href="#Implementation-Configuration">3.5. Configuration</a></li>
+<li><a href="#add-command">3.6. Add Command</a></li>
 </ul>
 </li>
 <li><a href="#documentation">4. Documentation</a>
@@ -981,6 +982,139 @@ Error can be occurred when the user download and use it.</p>
 <h3 id="Implementation-Configuration"><a class="link" href="#Implementation-Configuration">3.5. Configuration</a></h3>
 <div class="paragraph">
 <p>Certain properties of the application can be controlled (e.g App name, logging level) through the configuration file (default: <code>config.json</code>).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="add-command"><a class="link" href="#add-command">3.6. Add Command</a></h3>
+<div class="sect3">
+<h4 id="current-implementation-3"><a class="link" href="#current-implementation-3">3.6.1. Current Implementation</a></h4>
+<div class="paragraph">
+<p>The <code>add</code> command allows user to add new events to the scheduler. Add Command is facilitated by the <code>AddCommand</code> class.
+The format of this command is <code>add event n/EVENT_NAME [s/START_DATETIME] [e/END_DATETIME] [d/DESCRIPTION] [v/VENUE] [rt/RECURRING_TYPE] [ru/RECURRING_UNTIL_DATETIME] [t/TAG]…​</code>.</p>
+</div>
+<div class="paragraph">
+<p>The command uses Natty, a natural language date parser written in Java to parse datetime given by user. When given a user inputted string, natty will parse the string into a <code>LocalDateTime</code> class.</p>
+</div>
+<div class="paragraph">
+<p><code>AddCommand</code> requires the interaction between both <code>Logic</code> and <code>Model</code> Component. The <code>Logic</code> component comprises of <code>AddCommandParser</code> and <code>RepeatEventGenerator</code>.
+The <code>AddCommandParser</code> parses the user input and <code>RepeatEventGenerator</code> generates repeating events (if any). The <code>Model</code> component is responsible for updating the internal event list.</p>
+</div>
+<div class="paragraph">
+<p>Given below is the execution flow of <code>Add Command</code>.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>When user inputs a command, <code>LogicManager</code> will call the <code>parseCommand</code> method in <code>SchedulerParser</code> with the user input as arguments.</p>
+</li>
+<li>
+<p>If the user input is valid and contains the keyword <code>add</code>, <code>AddCommandParser</code> will be instantiated.</p>
+</li>
+<li>
+<p><code>SchedulerParser</code> will then call the <code>parse</code> method of <code>AddCommandParser</code>.</p>
+</li>
+<li>
+<p><code>AddCommandParser</code> parses the user input with the respective parsing methods.</p>
+</li>
+<li>
+<p><code>generateAllRepeatedEvents</code> method in <code>RepeatEventGenerator</code> is invoked to generate a list of repeating events according to the repeat type of event specified by the user input.</p>
+</li>
+<li>
+<p><code>AddCommand</code> will be instantiated with the list of events.</p>
+</li>
+<li>
+<p><code>LogicManager</code> will the proceed to call the <code>execute</code> command of <code>AddCommand</code>.</p>
+</li>
+<li>
+<p><code>Model</code> Component will then add the list of events to an internal list of events using the <code>addEvents</code> method.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The following sequence diagram demonstrates how the add operation works:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/AddCommandSequenceDiagram.png" alt="AddCommandSequenceDiagram" width="800">
+</div>
+</div>
+<div class="paragraph">
+<p>The following activity diagram summarizes what happens when a user executes a new <code>Add Command</code>:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/AddCommandActivityDiagram.png" alt="AddCommandActivityDiagram" width="650">
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="design-considerations-3"><a class="link" href="#design-considerations-3">3.6.2. Design Considerations</a></h4>
+<div class="sect4">
+<h5 id="aspect-generation-of-repeating-events"><a class="link" href="#aspect-generation-of-repeating-events">Aspect: Generation of repeating events</a></h5>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Alternative 1 (current choice):</strong> Use <code>RepeatEventGenerator</code> to generate repeating events.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Pros: Singleton pattern. Easy to generate repeating events anywhere in the code base. Reduce <code>RepeatEventGenerator</code> object creations in testing. Uses Single Responsibility principle.</p>
+</li>
+<li>
+<p>Cons: May increase coupling across code base. May increase the difficulty of testing due to singleton object.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Alternative 2:</strong> Event model knows how to generate its repeating events by itself.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Pros: Will use less memory (e.g. generating events do not need to depend on another class to generate the repeating events).</p>
+</li>
+<li>
+<p>Cons: Increase coupling.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="aspect-datetime-parser"><a class="link" href="#aspect-datetime-parser">Aspect: Datetime Parser</a></h5>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Alternative 1 (current choice):</strong> Use Natty, a natural language date parser.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Pros: Users do not need to conform to a standard format and able to enter datetime in a more natural way. User can also specify relative datetime, which provides flexibility in datetime input.</p>
+</li>
+<li>
+<p>Cons: Parser may not be able to parse all natural language format due to ambiguity in language formats. There may also be a chance of parsing an invalid datetime.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Alternative 2:</strong> Use standard <code>DDMMYY</code> <code>HHMMSS</code> format for all datetime inputs.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Pros: Users will always be assured of correct datetime being parsed if they provide the correct input.</p>
+</li>
+<li>
+<p>Cons: Reduce the flexibility as users have to conform to a standard format.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -2598,4 +2732,4 @@ Expected: Similar to previous.</p>
 </div>
 </div>
 </div>
-</div></div><div id="footer"><div class="container"><div id="footer-text">Last updated 2018-10-18 03:02:43 UTC</div></div></div></body></html>
+</div></div><div id="footer"><div class="container"><div id="footer-text">Last updated 2018-10-18 03:05:06 UTC</div></div></div></body></html>
