@@ -41,7 +41,8 @@ public class EditCommandTest {
         EditEventDescriptor descriptor = new EditEventDescriptorBuilder(editedEvent).build();
         EditCommand editCommand = new EditCommand(INDEX_FIRST_EVENT, descriptor);
 
-        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_EVENT_SUCCESS, editedEvent);
+        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_EVENT_SUCCESS,
+                model.getFilteredEventList().get(0).getEventName());
 
         Model expectedModel = new ModelManager(new Scheduler(model.getScheduler()), new UserPrefs());
         expectedModel.updateEvent(model.getFilteredEventList().get(0), editedEvent);
@@ -52,21 +53,20 @@ public class EditCommandTest {
 
     @Test
     public void execute_someFieldsSpecifiedUnfilteredList_success() {
-        Index indexLastEvent = Index.fromOneBased(model.getFilteredEventList().size());
-        Event lastEvent = model.getFilteredEventList().get(indexLastEvent.getZeroBased());
+        Event firstEvent = model.getFilteredEventList().get(INDEX_FIRST_EVENT.getZeroBased());
 
-        EventBuilder eventInList = new EventBuilder(lastEvent);
+        EventBuilder eventInList = new EventBuilder(firstEvent);
         Event editedEvent = eventInList.withEventName(VALID_EVENT_NAME_MA2101)
                 .build();
 
         EditEventDescriptor descriptor = new EditEventDescriptorBuilder().withEventName(VALID_EVENT_NAME_MA2101)
                 .build();
-        EditCommand editCommand = new EditCommand(indexLastEvent, descriptor);
+        EditCommand editCommand = new EditCommand(INDEX_FIRST_EVENT, descriptor);
 
-        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_EVENT_SUCCESS, editedEvent);
+        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_EVENT_SUCCESS, firstEvent.getEventName());
 
         Model expectedModel = new ModelManager(new Scheduler(model.getScheduler()), new UserPrefs());
-        expectedModel.updateEvent(lastEvent, editedEvent);
+        expectedModel.updateEvent(firstEvent, editedEvent);
         expectedModel.commitScheduler();
 
         assertCommandSuccess(editCommand, model, commandHistory, expectedMessage, expectedModel);
@@ -77,7 +77,7 @@ public class EditCommandTest {
         EditCommand editCommand = new EditCommand(INDEX_FIRST_EVENT, new EditEventDescriptor());
         Event editedEvent = model.getFilteredEventList().get(INDEX_FIRST_EVENT.getZeroBased());
 
-        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_EVENT_SUCCESS, editedEvent);
+        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_EVENT_SUCCESS, editedEvent.getEventName());
 
         Model expectedModel = new ModelManager(new Scheduler(model.getScheduler()), new UserPrefs());
         expectedModel.commitScheduler();
@@ -94,7 +94,8 @@ public class EditCommandTest {
         EditCommand editCommand = new EditCommand(INDEX_FIRST_EVENT,
                 new EditEventDescriptorBuilder().withEventName(VALID_EVENT_NAME_MA2101).build());
 
-        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_EVENT_SUCCESS, editedEvent);
+        String expectedMessage = String.format(EditCommand.MESSAGE_EDIT_EVENT_SUCCESS,
+                eventInFilteredList.getEventName());
 
         Model expectedModel = new ModelManager(new Scheduler(model.getScheduler()), new UserPrefs());
         expectedModel.updateEvent(model.getFilteredEventList().get(0), editedEvent);
@@ -183,7 +184,9 @@ public class EditCommandTest {
 
         showEventAtIndex(model, INDEX_SECOND_EVENT);
         Event eventToEdit = model.getFilteredEventList().get(INDEX_FIRST_EVENT.getZeroBased());
-        expectedModel.updateEvent(eventToEdit, editedEvent);
+        Event secondEditedEvent = new EventBuilder(editedEvent).withUid(eventToEdit.getUid())
+                .withUuid(eventToEdit.getUuid()).build();
+        expectedModel.updateEvent(eventToEdit, secondEditedEvent);
         expectedModel.commitScheduler();
 
         // edit -> edits second event in unfiltered event list / first event in filtered event list

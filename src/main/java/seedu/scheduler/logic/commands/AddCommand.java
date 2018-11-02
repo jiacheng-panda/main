@@ -4,9 +4,13 @@ import static java.util.Objects.requireNonNull;
 import static seedu.scheduler.logic.parser.CliSyntax.PREFIX_DESCRIPTION;
 import static seedu.scheduler.logic.parser.CliSyntax.PREFIX_END_DATE_TIME;
 import static seedu.scheduler.logic.parser.CliSyntax.PREFIX_EVENT_NAME;
+import static seedu.scheduler.logic.parser.CliSyntax.PREFIX_EVENT_REMINDER_DURATION;
 import static seedu.scheduler.logic.parser.CliSyntax.PREFIX_START_DATE_TIME;
 import static seedu.scheduler.logic.parser.CliSyntax.PREFIX_TAG;
 
+import java.util.Collections;
+
+import seedu.scheduler.commons.web.ConnectToGoogleCalendar;
 import seedu.scheduler.logic.CommandHistory;
 import seedu.scheduler.logic.RepeatEventGenerator;
 import seedu.scheduler.logic.commands.exceptions.CommandException;
@@ -19,6 +23,8 @@ import seedu.scheduler.model.event.Event;
 public class AddCommand extends Command {
 
     public static final String COMMAND_WORD = "add";
+    public static final String COMMAND_ALIAS_ONE = "ad";
+    public static final String COMMAND_ALIAS_TWO = "a";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": Adds an event to the scheduler. "
             + "Parameters: "
@@ -33,10 +39,14 @@ public class AddCommand extends Command {
             + PREFIX_END_DATE_TIME + "tomorrow 3am "
             + PREFIX_DESCRIPTION + "Studying time "
             + PREFIX_TAG + "study "
-            + PREFIX_TAG + "ad-hoc";
+            + PREFIX_TAG + "adhoc"
+            + PREFIX_EVENT_REMINDER_DURATION + "1h";
 
     public static final String MESSAGE_SUCCESS = "New event added: %1$s";
     public static final String MESSAGE_DUPLICATE_EVENT = "This event already exists in the scheduler";
+
+    private final ConnectToGoogleCalendar connectToGoogleCalendar =
+            new ConnectToGoogleCalendar();
 
     private final Event toAdd;
 
@@ -58,6 +68,7 @@ public class AddCommand extends Command {
 
         model.addEvents(RepeatEventGenerator.getInstance().generateAllRepeatedEvents(toAdd));
         model.commitScheduler();
+        connectToGoogleCalendar.pushToGoogleCal(Collections.singletonList(toAdd));
         return new CommandResult(String.format(MESSAGE_SUCCESS, toAdd));
     }
 
