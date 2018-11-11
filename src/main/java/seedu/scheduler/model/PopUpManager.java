@@ -100,10 +100,8 @@ public class PopUpManager {
      * @param editedEvent
      */
     public void edit(Event target, Event editedEvent) {
-        if (!target.getReminderDurationList().equals(editedEvent.getReminderDurationList())) {
-            delete(target);
-            add(editedEvent);
-        }
+        delete(target);
+        add(editedEvent);
     }
 
     /**
@@ -113,11 +111,8 @@ public class PopUpManager {
      * @param editedEvents
      */
     public void editAll(Event target, List<Event> editedEvents) {
-        Event firstEvent = editedEvents.get(0);
-        if (!target.getReminderDurationList().equals(firstEvent.getReminderDurationList())) {
-            deleteAll(target);
-            add(editedEvents);
-        }
+        deleteAll(target);
+        add(editedEvents);
     }
 
     /**
@@ -127,11 +122,8 @@ public class PopUpManager {
      * @param editedEvents
      */
     public void editUpcoming(Event target, List<Event> editedEvents) {
-        Event firstEvent = editedEvents.get(0);
-        if (!target.getReminderDurationList().equals(firstEvent.getReminderDurationList())) {
-            deleteUpcoming(target);
-            add(editedEvents);
-        }
+        deleteUpcoming(target);
+        add(editedEvents);
     }
 
     /**
@@ -142,7 +134,7 @@ public class PopUpManager {
     public void delete(Event target) {
         PriorityQueue<EventPopUpInfo> newQueue = new PriorityQueue<>();
         for (EventPopUpInfo eventPopUpInfo : popUpQueue) {
-            if (!eventPopUpInfo.getUid().equals(target.getUid())) {
+            if (!eventPopUpInfo.getEventUid().equals(target.getEventUid())) {
                 newQueue.add(eventPopUpInfo);
             }
         }
@@ -186,7 +178,7 @@ public class PopUpManager {
      * @return
      */
     private Boolean isUpcomingEvent(EventPopUpInfo event, Event target) {
-        return (event.getUuid().equals(target.getUuid())
+        return (event.getEventSetUid().equals(target.getEventSetUid())
                         && event.getStartDateTime().compareTo(target.getStartDateTime()) > 0);
     }
 
@@ -197,7 +189,7 @@ public class PopUpManager {
      * @return
      */
     private Boolean isRecurringEvent(EventPopUpInfo event, Event target) {
-        return event.getUuid().equals(target.getUuid());
+        return event.getEventSetUid().equals(target.getEventSetUid());
     }
 
     /**
@@ -207,8 +199,8 @@ public class PopUpManager {
      */
     private ArrayList<EventPopUpInfo> generateAllPopUpInfoListFromEvent(Event event) {
         ArrayList<EventPopUpInfo> result = new ArrayList<>();
-        UUID uid = event.getUid();
-        UUID uuid = event.getUuid();
+        UUID uid = event.getEventUid();
+        UUID uuid = event.getEventSetUid();
         EventName eventName = event.getEventName();
         DateTime startDateTime = event.getStartDateTime();
         DateTime endDateTime = event.getEndDateTime();
@@ -290,34 +282,14 @@ public class PopUpManager {
             public Void call() {
                 while (true) {
                     DateTime currentDateTime = getNow();
-                    // logger.info("Checking current event popUp info queue...");
-
-                    // check the event queue date time
-                    if (!flag) {
-                        if (!popUpQueue.isEmpty()) {
-                            DateTime frontEventDateTime = popUpQueue.peek().getPopUpDateTime();
-                            //logger.info(frontEventDateTime.toString());
-                            while (frontEventDateTime.isPast(currentDateTime)) {
-                                EventPopUpInfo currentPopUp = popUpQueue.peek();
-                                displayPopUp("Past Reminder",
-                                        currentPopUp.getPastPopUpDisplay());
-                                // pastPopUps.add(currentPopUp);
-                                popUpQueue.remove();
-                                if (!popUpQueue.isEmpty()) {
-                                    frontEventDateTime = popUpQueue.peek().getPopUpDateTime();
-                                } else {
-                                    break;
-                                }
-                            }
-                            flag = true;
-                        }
-                    }
+                    logger.info("Current event pop up queue has " + popUpQueue.size() + " reminders");
 
                     if (!popUpQueue.isEmpty()) {
                         //logger.info("Checking for incoming events");
                         DateTime frontEventDateTime = popUpQueue.peek().getPopUpDateTime();
                         //logger.info(frontEventDateTime.toString());
-                        while (frontEventDateTime.isClose(currentDateTime)) {
+                        while (frontEventDateTime.isClose(currentDateTime)
+                                || frontEventDateTime.isPast(currentDateTime)) {
                             EventPopUpInfo currentPopUp = popUpQueue.peek();
                             displayPopUp(currentPopUp.getEventName().toString(), currentPopUp.getPopUpDisplay());
                             // pastPopUps.add(currentPopUp);

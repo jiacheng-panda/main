@@ -2,8 +2,15 @@ package seedu.scheduler.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.scheduler.logic.parser.CliSyntax.FLAG_UPCOMING;
+import static seedu.scheduler.logic.parser.CliSyntax.PREFIX_DESCRIPTION;
+import static seedu.scheduler.logic.parser.CliSyntax.PREFIX_END_DATE_TIME;
 import static seedu.scheduler.logic.parser.CliSyntax.PREFIX_EVENT_NAME;
+import static seedu.scheduler.logic.parser.CliSyntax.PREFIX_EVENT_REMINDER_DURATION;
+import static seedu.scheduler.logic.parser.CliSyntax.PREFIX_REPEAT_TYPE;
+import static seedu.scheduler.logic.parser.CliSyntax.PREFIX_REPEAT_UNTIL_DATE_TIME;
+import static seedu.scheduler.logic.parser.CliSyntax.PREFIX_START_DATE_TIME;
 import static seedu.scheduler.logic.parser.CliSyntax.PREFIX_TAG;
+import static seedu.scheduler.logic.parser.CliSyntax.PREFIX_VENUE;
 import static seedu.scheduler.model.Model.PREDICATE_SHOW_ALL_EVENTS;
 
 import java.time.Duration;
@@ -14,7 +21,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
+import java.util.logging.Logger;
 
+import seedu.scheduler.commons.core.LogsCenter;
 import seedu.scheduler.commons.core.Messages;
 import seedu.scheduler.commons.core.index.Index;
 import seedu.scheduler.commons.util.CollectionUtil;
@@ -24,6 +33,7 @@ import seedu.scheduler.logic.CommandHistory;
 import seedu.scheduler.logic.RepeatEventGenerator;
 import seedu.scheduler.logic.commands.exceptions.CommandException;
 import seedu.scheduler.logic.parser.Flag;
+import seedu.scheduler.logic.parser.exceptions.ParseException;
 import seedu.scheduler.model.Model;
 import seedu.scheduler.model.event.DateTime;
 import seedu.scheduler.model.event.Description;
@@ -33,6 +43,7 @@ import seedu.scheduler.model.event.ReminderDurationList;
 import seedu.scheduler.model.event.RepeatType;
 import seedu.scheduler.model.event.Venue;
 import seedu.scheduler.model.tag.Tag;
+import seedu.scheduler.ui.UiManager;
 
 /**
  * Edits the details of an existing event in the scheduler.
@@ -48,22 +59,38 @@ public class EditCommand extends Command {
             + "Existing values will be overwritten by the input values.\n"
             + "Parameters: INDEX (must be a positive integer) "
             + "[" + PREFIX_EVENT_NAME + "NAME] "
-            + "[" + PREFIX_EVENT_NAME + "EMAIL] "
-            + "[" + PREFIX_EVENT_NAME + "ADDRESS] "
+            + "[" + PREFIX_START_DATE_TIME + "DATETIME in natural language] "
+            + "[" + PREFIX_END_DATE_TIME + "DATETIME in natural language] "
+            + "[" + PREFIX_DESCRIPTION + "DESCRIPTION]"
+            + "[" + PREFIX_VENUE + "VENUE]"
+            + "[" + PREFIX_REPEAT_TYPE + "REPEAT TYPE]"
+            + "[" + PREFIX_REPEAT_UNTIL_DATE_TIME + "REPEAT UNTIL DATETIME]"
+            + "[" + PREFIX_EVENT_REMINDER_DURATION + "REMINDER DURATION]"
             + "[" + PREFIX_TAG + "TAG]...\n"
-            + "Example: " + COMMAND_WORD + " 1 "
-            + PREFIX_EVENT_NAME + "johndoe@example.com";
+            + "Example: " + COMMAND_WORD + " "
+            + PREFIX_EVENT_NAME + "Date with Cynthia "
+            + PREFIX_START_DATE_TIME + "today 11pm "
+            + PREFIX_END_DATE_TIME + "tomorrow 2am "
+            + PREFIX_DESCRIPTION + "Dating time "
+            + PREFIX_VENUE + "McDonald's "
+            + PREFIX_REPEAT_TYPE + "Weekly "
+            + PREFIX_REPEAT_UNTIL_DATE_TIME + "next Saturday 3am "
+            + PREFIX_EVENT_REMINDER_DURATION + "5h "
+            + PREFIX_TAG + "date "
+            + PREFIX_TAG + "planned";
 
     public static final String MESSAGE_EDIT_EVENT_SUCCESS = "Edited Event: %1$s";
     public static final String MESSAGE_NOT_EDITED = "At least one field to edit must be provided.";
-    public static final String MESSAGE_SINGLE_EVENT_FAIL = "Repeat type field and repeat until date time field"
-            + " cannot be edited for a particular event in a set of repeated events";
+    public static final String MESSAGE_INTERNET_ERROR = "Only local changes,"
+            + "no effects on your Google Calender.";
+    private static final Logger logger = LogsCenter.getLogger(UiManager.class);
+
+    protected final Index index;
+    protected final EditEventDescriptor editEventDescriptor;
+    protected final Flag[] flags;
 
     private final ConnectToGoogleCalendar connectToGoogleCalendar =
             new ConnectToGoogleCalendar();
-    private final Index index;
-    private final EditEventDescriptor editEventDescriptor;
-    private final Flag[] flags;
 
     /**
      * @param index               of the event in the filtered event list to edit
@@ -81,61 +108,84 @@ public class EditCommand extends Command {
     @Override
     public CommandResult execute(Model model, CommandHistory history) throws CommandException {
         requireNonNull(model);
+        boolean googleCalendarIsEnabled = connectToGoogleCalendar.isGoogleCalendarEnabled();
         List<Event> lastShownList = model.getFilteredEventList();
 
         if (index.getZeroBased() >= lastShownList.size()) {
+            logger.info(Messages.MESSAGE_INVALID_EVENT_DISPLAYED_INDEX);
             throw new CommandException(Messages.MESSAGE_INVALID_EVENT_DISPLAYED_INDEX);
         }
 
-        Event eventToEdit;
-        //for Sync with Google START
-        eventToEdit = lastShownList.get(index.getZeroBased());
-        Event editedEvent = createEditedEvent(eventToEdit, editEventDescriptor);
-        int totalInstance = EventFormatUtil.calculateTotalInstanceNumber(lastShownList, eventToEdit);
+        //Set up event to be edited and edited event according to user input
+        logger.info("Creating event to be edited.");
+        Event eventToEdit = lastShownList.get(index.getZeroBased());
+
+        //Calculate parameters for updating events in Google Calender
+        logger.info("Calculating parameters for Google calender edit commands.");
         int instanceIndex = EventFormatUtil.calculateInstanceIndex(lastShownList, eventToEdit);
-        //for Sync with Google
-        if (flags.length == 0) {
-            connectToGoogleCalendar.updateSingleGoogleEvent(eventToEdit, editedEvent, instanceIndex, totalInstance);
-        } else if (flags[0].equals(FLAG_UPCOMING)) {
-            connectToGoogleCalendar.updateUpcomingGoogleEvent(eventToEdit, editedEvent, instanceIndex, totalInstance);
-        } else {
-            connectToGoogleCalendar.updateAllGoogleEvent(eventToEdit, editedEvent, instanceIndex, totalInstance);
-        }
-        //for Sync with Google END
-        if (flags.length == 0) {
-            eventToEdit = lastShownList.get(index.getZeroBased());
-            editedEvent = createEditedEvent(eventToEdit, editEventDescriptor);
-            model.updateEvent(eventToEdit, editedEvent);
-        } else {
-            eventToEdit = lastShownList.get(index.getZeroBased());
-            Predicate<Event> firstInstancePredicate;
-            Event firstEventToEdit;
-            List<Event> editedEvents;
+        boolean operationOnGoogleCalIsSuccessful;
 
-            if (flags[0].equals(FLAG_UPCOMING)) {
-                editedEvents = createEditedEvents(eventToEdit, eventToEdit, editEventDescriptor);
-                model.updateUpcomingEvents(eventToEdit, editedEvents);
-            } else { //will catch FLAG_ALL
-                firstInstancePredicate = getFirstInstancePredicate(eventToEdit, editEventDescriptor);
-                firstEventToEdit = model.getFirstInstanceOfEvent(firstInstancePredicate);
-                editedEvents = createEditedEvents(eventToEdit, firstEventToEdit, editEventDescriptor);
-                model.updateRepeatingEvents(eventToEdit, editedEvents);
+        try {
+            //Update by cases
+            //Case1: edit single event
+            logger.info("The EditCommand will be executed by cases.");
+            if (flags.length == 0) {
+                logger.info("Single event will be edited.");
+                Event editedEvent = createEditedEvent(eventToEdit, editEventDescriptor);
+                operationOnGoogleCalIsSuccessful = connectToGoogleCalendar.updateSingleGoogleEvent(
+                        googleCalendarIsEnabled, eventToEdit, editedEvent, instanceIndex);
+                model.updateEvent(eventToEdit, editedEvent);
+            } else {
+                //edit upcoming or all events in a EventSet
+                logger.info("The upcoming events in a EventSet to be edited.");
+                List<Event> editedEvents;
+                int effectRangeStartingIndex;
+                if (flags[0].equals(FLAG_UPCOMING)) {
+                    //Case2: edit upcoming events
+                    editedEvents = createEditedEvents(eventToEdit, eventToEdit, editEventDescriptor);
+                    effectRangeStartingIndex = instanceIndex;
+                    operationOnGoogleCalIsSuccessful =
+                            connectToGoogleCalendar.updateRangeGoogleEvent(googleCalendarIsEnabled,
+                                    eventToEdit, editedEvents, instanceIndex, effectRangeStartingIndex);
+                    model.updateUpcomingEvents(eventToEdit, editedEvents);
+                } else {
+                    //Case3: edit all events
+                    logger.info("All the events in a EventSet to be edited.");
+                    Predicate<Event> firstInstancePredicate = getFirstInstancePredicate(eventToEdit,
+                            editEventDescriptor);
+                    Event firstEventToEdit = model.getFirstInstanceOfEvent(firstInstancePredicate);
+                    editedEvents = createEditedEvents(eventToEdit, firstEventToEdit, editEventDescriptor);
+                    effectRangeStartingIndex = 0;
+                    operationOnGoogleCalIsSuccessful = connectToGoogleCalendar.updateRangeGoogleEvent(
+                            googleCalendarIsEnabled, eventToEdit, editedEvents,
+                            instanceIndex, effectRangeStartingIndex);
+                    model.updateRepeatingEvents(eventToEdit, editedEvents);
+                }
             }
+        } catch (ParseException e) {
+            throw new CommandException(e.getMessage());
         }
-
+        logger.info("Local update Done. Commit to Scheduler.");
         model.updateFilteredEventList(PREDICATE_SHOW_ALL_EVENTS);
         model.commitScheduler();
-        return new CommandResult(String.format(MESSAGE_EDIT_EVENT_SUCCESS, eventToEdit.getEventName()));
+
+        if (operationOnGoogleCalIsSuccessful | !connectToGoogleCalendar.isGoogleCalendarEnabled()) {
+            return new CommandResult(String.format(MESSAGE_EDIT_EVENT_SUCCESS, eventToEdit.getEventName()));
+        } else {
+            return new CommandResult(String.format(MESSAGE_EDIT_EVENT_SUCCESS, eventToEdit.getEventName())
+                    + "\n" + MESSAGE_INTERNET_ERROR);
+        }
     }
 
     /**
      * Creates and returns a {@code Event} with the details of {@code eventToEdit} edited with {@code
      * editEventDescriptor}.
      */
-    private static Event createEditedEvent(Event eventToEdit, EditEventDescriptor editEventDescriptor) {
+    private static Event createEditedEvent(Event eventToEdit, EditEventDescriptor editEventDescriptor)
+            throws ParseException {
         assert eventToEdit != null;
-        UUID eventUid = editEventDescriptor.getUid().orElse(eventToEdit.getUid());
-        UUID eventUuid = editEventDescriptor.getUuid().orElse(eventToEdit.getUuid());
+        UUID eventUid = editEventDescriptor.getEventUid().orElse(eventToEdit.getEventUid());
+        UUID eventUuid = editEventDescriptor.getEventSetUid().orElse(eventToEdit.getEventSetUid());
         EventName updatedEventName = editEventDescriptor.getEventName().orElse(eventToEdit.getEventName());
         DateTime updatedStartDateTime = editEventDescriptor.getStartDateTime().orElse(eventToEdit.getStartDateTime());
         DateTime updatedEndDateTime = editEventDescriptor.getEndDateTime().orElse(eventToEdit.getEndDateTime());
@@ -148,6 +198,14 @@ public class EditCommand extends Command {
         ReminderDurationList updatedReminderDurationList =
                 editEventDescriptor.getReminderDurationList().orElse(eventToEdit.getReminderDurationList());
 
+        if (!Event.isValidEventDateTime(updatedStartDateTime, updatedEndDateTime)) {
+            throw new ParseException(Event.MESSAGE_START_END_DATETIME_CONSTRAINTS);
+        }
+
+        if (!Event.isValidEventDateTime(updatedEndDateTime, updatedRepeatUntilDateTime)) {
+            throw new ParseException(Event.MESSAGE_END_REPEAT_UNTIL_DATETIME_CONSTRAINTS);
+        }
+
         return new Event(eventUid, eventUuid, updatedEventName, updatedStartDateTime, updatedEndDateTime,
                 updatedDescription, updatedVenue, updatedRepeatType, updatedRepeatUntilDateTime, updatedTags,
                 updatedReminderDurationList);
@@ -158,12 +216,12 @@ public class EditCommand extends Command {
      * editEventDescriptor}.
      */
     private static List<Event> createEditedEvents(Event eventToEdit, Event firstEventToEdit,
-                                                  EditEventDescriptor editEventDescriptor) {
+                                                  EditEventDescriptor editEventDescriptor) throws ParseException {
         assert eventToEdit != null;
         assert firstEventToEdit != null;
 
-        UUID eventUid = editEventDescriptor.getUid().orElse(eventToEdit.getUid());
-        UUID eventUuid = editEventDescriptor.getUuid().orElse(eventToEdit.getUuid());
+        UUID eventUid = editEventDescriptor.getEventUid().orElse(eventToEdit.getEventUid());
+        UUID eventUuid = editEventDescriptor.getEventSetUid().orElse(eventToEdit.getEventSetUid());
         EventName updatedEventName = editEventDescriptor.getEventName().orElse(eventToEdit.getEventName());
         DateTime updatedStartDateTime = new DateTime(firstEventToEdit.getStartDateTime().value
                 .plus(Duration.between(eventToEdit.getStartDateTime().value,
@@ -182,6 +240,15 @@ public class EditCommand extends Command {
         Event updatedEvent = new Event(eventUid, eventUuid, updatedEventName, updatedStartDateTime, updatedEndDateTime,
                 updatedDescription, updatedVenue, updatedRepeatType, updatedRepeatUntilDateTime, updatedTags,
                 updatedReminderDurationList);
+
+        if (!Event.isValidEventDateTime(updatedStartDateTime, updatedEndDateTime)) {
+            throw new ParseException(Event.MESSAGE_START_END_DATETIME_CONSTRAINTS);
+        }
+
+        if (!Event.isValidEventDateTime(updatedEndDateTime, updatedRepeatUntilDateTime)) {
+            throw new ParseException(Event.MESSAGE_END_REPEAT_UNTIL_DATETIME_CONSTRAINTS);
+        }
+
         return RepeatEventGenerator.getInstance().generateAllRepeatedEvents(updatedEvent);
     }
 
@@ -194,7 +261,7 @@ public class EditCommand extends Command {
         assert eventToEdit != null;
 
         if (!editEventDescriptor.getRepeatType().isPresent()) {
-            return event -> event.getUuid().equals(eventToEdit.getUuid());
+            return event -> event.getEventSetUid().equals(eventToEdit.getEventSetUid());
         }
 
         RepeatType updatedRepeatType = editEventDescriptor.getRepeatType().get();
@@ -202,16 +269,16 @@ public class EditCommand extends Command {
 
         switch (updatedRepeatType) {
         case WEEKLY:
-            return event -> event.getUuid().equals(eventToEdit.getUuid())
+            return event -> event.getEventSetUid().equals(eventToEdit.getEventSetUid())
                     && event.getStartDateTime().value.getDayOfWeek() == updatedStartDateTime.value.getDayOfWeek();
         case MONTHLY:
-            return event -> event.getUuid().equals(eventToEdit.getUuid())
+            return event -> event.getEventSetUid().equals(eventToEdit.getEventSetUid())
                     && event.getStartDateTime().value.getDayOfMonth() == updatedStartDateTime.value.getDayOfMonth();
         case YEARLY:
-            return event -> event.getUuid().equals(eventToEdit.getUuid())
+            return event -> event.getEventSetUid().equals(eventToEdit.getEventSetUid())
                     && event.getStartDateTime().value.getDayOfYear() == updatedStartDateTime.value.getDayOfYear();
         default:
-            return event -> event.getUuid().equals(eventToEdit.getUuid());
+            return event -> event.getEventSetUid().equals(eventToEdit.getEventSetUid());
         }
     }
 
@@ -238,8 +305,8 @@ public class EditCommand extends Command {
      * of the event.
      */
     public static class EditEventDescriptor {
-        private UUID uid;
-        private UUID uuid;
+        private UUID eventUid;
+        private UUID eventSetUid;
         private EventName eventName;
         private DateTime startDateTime;
         private DateTime endDateTime;
@@ -257,8 +324,8 @@ public class EditCommand extends Command {
          * Copy constructor. A defensive copy of {@code tags} is used internally.
          */
         public EditEventDescriptor(EditEventDescriptor toCopy) {
-            setUid(toCopy.uid);
-            setUuid(toCopy.uuid);
+            setEventUid(toCopy.eventUid);
+            setEventSetUid(toCopy.eventSetUid);
             setEventName(toCopy.eventName);
             setStartDateTime(toCopy.startDateTime);
             setEndDateTime(toCopy.endDateTime);
@@ -278,20 +345,20 @@ public class EditCommand extends Command {
                     venue, repeatType, repeatUntilDateTime, tags, reminderDurationList);
         }
 
-        public void setUid(UUID uid) {
-            this.uid = uid;
+        public void setEventUid(UUID eventUid) {
+            this.eventUid = eventUid;
         }
 
-        public Optional<UUID> getUid() {
-            return Optional.ofNullable(uid);
+        public Optional<UUID> getEventUid() {
+            return Optional.ofNullable(eventUid);
         }
 
-        public void setUuid(UUID uuid) {
-            this.uuid = uuid;
+        public void setEventSetUid(UUID eventSetUid) {
+            this.eventSetUid = eventSetUid;
         }
 
-        public Optional<UUID> getUuid() {
-            return Optional.ofNullable(uuid);
+        public Optional<UUID> getEventSetUid() {
+            return Optional.ofNullable(eventSetUid);
         }
 
         public void setEventName(EventName eventName) {

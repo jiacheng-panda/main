@@ -7,16 +7,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import seedu.scheduler.logic.commands.AddCommand;
+import seedu.scheduler.logic.commands.AddReminderCommand;
 import seedu.scheduler.logic.commands.ClearCommand;
 import seedu.scheduler.logic.commands.Command;
 import seedu.scheduler.logic.commands.DeleteCommand;
+import seedu.scheduler.logic.commands.DeleteReminderCommand;
 import seedu.scheduler.logic.commands.EditCommand;
+import seedu.scheduler.logic.commands.EnterGoogleCalendarModeCommand;
 import seedu.scheduler.logic.commands.ExitCommand;
 import seedu.scheduler.logic.commands.FindCommand;
-import seedu.scheduler.logic.commands.GetGoogleCalendarEventsCommand;
 import seedu.scheduler.logic.commands.HelpCommand;
 import seedu.scheduler.logic.commands.HistoryCommand;
 import seedu.scheduler.logic.commands.ListCommand;
+import seedu.scheduler.logic.commands.PostponeReminderCommand;
 import seedu.scheduler.logic.commands.RedoCommand;
 import seedu.scheduler.logic.commands.SelectCommand;
 import seedu.scheduler.logic.commands.UndoCommand;
@@ -59,6 +62,16 @@ public class SchedulerParser {
         case EditCommand.COMMAND_ALIAS_TWO:
             return new EditCommandParser().parse(arguments);
 
+
+        case AddReminderCommand.COMMAND_WORD:
+            return new AddReminderCommandParser().parse(arguments);
+
+        case DeleteReminderCommand.COMMAND_WORD:
+            return new DeleteReminderCommandParser().parse(arguments);
+
+        case PostponeReminderCommand.COMMAND_WORD:
+            return new PostponeReminderCommandParser().parse(arguments);
+
         case SelectCommand.COMMAND_WORD:
         case SelectCommand.COMMAND_ALIAS_ONE:
         case SelectCommand.COMMAND_ALIAS_TWO:
@@ -88,8 +101,8 @@ public class SchedulerParser {
         case FindCommand.COMMAND_ALIAS_THREE:
             return new FindCommandParser().parse(arguments);
 
-        case GetGoogleCalendarEventsCommand.COMMAND_WORD:
-            return new GetGoogleCalendarEventsCommand();
+        case EnterGoogleCalendarModeCommand.COMMAND_WORD:
+            return new EnterGoogleCalendarModeCommand();
 
         case ListCommand.COMMAND_WORD:
         case ListCommand.COMMAND_ALIAS_ONE:
