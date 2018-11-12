@@ -386,35 +386,39 @@ developers of our project.
 Single Responsibility Principle and Separation of Concerns as `HistoryManager` now needs to do two different things.
 // end::undoredo[]
 
-// tag::getGoogleCalendarEvents/postGoogleCalendarEvents[]
-=== Get/Post Google Calendar Events
+// tag::EnterGoogleCalendarMode[]
+=== EnterGoogleCalendarMode
 
 ==== Current Implementation
-The get/post Google Calendar events mechanism is facilitated by [proposed] utility method to get Google authentication.
-It implements the following operations:
 
-* `getGoogleCalendarEvents` -- Get (pull) the online Google Calendar events and merge with local events.
-* `postGoogleCalendarEvents` -- Post (push) the local events and merge with online Google Calendar.
+The EnterGoogleCalendarMode mechanism is facilitated by utility method to get Google authentication and enables the Google Calendar feature. It implements the following operations:
 
-Below is an example usage scenario and explanation on the `Get/PostGoogleCalendarEvents` mechanism behavior behind each
-step.
+* `EnterGoogleCalendarMode` -- Enable the Google Calendar feasture and , get (pull) the online Google Calendar events and merge with local events.
+* `postGoogleCalendarEvents`[coming in v2.0] -- Post (push) the local events and merge with online Google Calendar.
+
+
+It also supports the following existing features, to enhance the with real-time effects on Google Calendar (those created with the app)
+* `Add` -- When the Google Calendar feature is enabled, the app creates the same event(s) in the google calendar.
+* `Edit` -- When the Google Calendar feature is enabled, the app edits the same event(s) in the google calendar.
+* `Delete` -- When the Google Calendar feature is enabled, the app deletes the same event(s) in the google calendar.
+* `Clear` -- When the Google Calendar feature is enabled, the app clears the primary google calendar.
+*The Event(s) mentioned above refer to those created by the app. The existing ones are not supproted yet. Even they are pulled to local database, commonds have no effect on them, as mentioned in the UserGuide*
+
+Below is an example usage scenario and explanation on the `EnterGoogleCalendarMode` mechanism behavior behind each step.
 
 **Step 1** +
--> The user has always been using the application locally. +
--> All Scheduler Events have been created locally. That is, the Scheduler has only local events (no Google Calendar
-Events).
+-> The user has always been using the application locally and never enabled this feasure. +
+-> All Scheduler Events have been created locally. That is, the Scheduler has only local events (no Google Calendar Events).
 
 -> An empty database is illustrated below as an imaginary array:
 
 image::EmptyLocalDataBaseDiagram.png[width="150"]
 
 **Step 2** +
--> The user executes `GetGCEvents` command to download the Google Calendar Events to the local database. +
+-> The user executes `EnterGoogleCalendarMode` command to enable the feature. download the Google Calendar Events to the local database. +
 
--> A `Calendar` object is to be built with method `getCalendar()`. +
--> A method `getNetHttpTransport()` is called to let application establish a connection with Google to initiate an
-authorization process
-(for those who use this command for the  first time).
+-> A `Calendar` object is to be built with method `getCalendar()` in `ConnectToGoogleCalendar.java` +
+-> A method `getNetHttpTransport()` is called to let application establish a connection with Google to initiate an authorization process (for those who use this command for the  first time).
 
 -> A pop-up window will appear. The User will be required to log in their Google Account as per other Google Service. +
 After successful login, the login credential will be saved locally such that no future log-in is required. +
@@ -431,28 +435,27 @@ image::flowChatForDecisionOnLogIn.png[width="350"]
 
 [NOTE]
 ====
-For developers, if you test the application locally, please do not push (include) this log-in credential file to the
-`out/production` package. +
+For developers, if you test the application locally, please do not include this log-in credential file to the `out/production` package. +
 Errors could occur when the user downloads and uses it.
 ====
 
 **Step 4** +
--> The application will then call method `getEvents` to extract a (Google)`Events` object from the user’s online Google
-Calendar.
-[NOTE]
-====
-For current implementation, only events in the primary (default) are extracted.
-====
+-> The application checks for whether the feature has already been enabled. If it is enabled, the command is rejected. This is because the method is an initialization method. Second initialization is rejected.
 
 **Step 5** +
--> For each event extracted, a [proposed] eventConvertor utility method called `addGcEventToLocal` is called to convert
-the Google Extracted Event to local Event.
+-> The application will then call method `getEvents` to extract a (Google)`Events` objects from the user’s online Google Calendar.
+[NOTE]
+====
+For current implementation, only events in the primary (default) calendar are extracted.
+====
 
 **Step 6** +
--> In the `execute` method, the converted events are saved in the local database, together with other locally created
-Events.
+-> For each event extracted, various ConvertEvent utility methods will be called to convert the Google Extracted Event to local Event.
 
-==== Design Considerations
+**Step 7** +
+-> The converted events are saved in the local database, together with other locally created Events.
+
+==== Design Considerations for EnterGoogleCalendarMode
 * **Save local login credential** (current choice)
 ** Pro: Improves the user experience -- user won’t have to log in every time they use this command, it would be too
 troublesome and not user-friendly.
@@ -462,7 +465,86 @@ troublesome and not user-friendly.
 ** Pro: Very secured.
 ** Con: Not user-friendly.
 
-{more to be updated}
+==== EnterGoogleCalendarMode - Add
+Below is an example usage scenario and explanation on the `Add` mechanism behavior behind each step.
+
+After the user enabled the Google Calendar feature, when the command `add n/Online Shopping! s/Dec 12, 2018 5pm e/Dec 12, 2018 7pm re/2H` is entered.
+
+**Step 1** +
+-> The local event is generated.
+
+**Step 2** +
+-> The `toAdd` Event is captured and send to `pushToGoogleCal` method.
+
+**Step 3** +
+->Regardless of whether the Event is a single event or a repeated event. `pushToGoogleCal` method sets the common attributes such as `EventName`, `Venue(Location)`, `Description`, `StartDateTime`, `EndDateTime` and `Reminders`.
+
+**Step 4** +
+-> If it is a RepeatEvent, set special attributes to it such as `googleRecurringEventId`, `googleiCalId`, `eventRepeatType`,`eventUntilDateTime`. A Google specific `commandMessage` is constructed and sent to Google API.
+
+Various convertion methods are called to convert the Event format from local Event to Google Event.
+
+==== Design Considerations  - Add
+
+A common identifier is needed to uniquelly identify the same Event in local database and in Google Calendar.
+
+* **Use Event Unique Id and EventSet Unique Id** (current choice)
+** Pro: It is unique and randomly generated.
+** Con: Very hard to implement and have to find the equivalent unique string in Google's implementation. Eventually, after checking out Google's implementation, we set the following equivalent properties: +
+EventUid == EventId +
+EventSetUid == iCalId
+
+* **By Name** (alternative)
+** Pro: Very easy to implement
+** Con: User unable to create events with the same name.
+
+==== EnterGoogleCalendarMode - Edit
+
+**Step 1** +
+->Command `clear` +
+Cleans up the enviroment
+
+**Step 2** +
+->Command `add n/Study For next sem s/2018-12-1 9pm e/2018-12-1 10pm rt/WEEKLY ru/2018-12-25 9pm`
+to create a repeat event, this event will trigger Google to create 4 Event Instances
+
+**Step 3** +
+->Command `edit 1 n/change1` +
+Only the first event will be edited, its name will become change1. +
+A command requst will be sent to edit the first event instance.
+
+**Step 4** +
+`edit 2 n/change2 -u`+
+The first event is untouched. +
+The event instances from the second one onwards in the same EventSet will be edited, their name swill become change2. +
+A command requst will be sent to edit the various event instances.
+
+**Step 5** +
+`edit 3 n/change3 -a`+
+All event instances in the same EventSet will be edited, their name swill become change3. +
+A command requst will be sent to edit the underlying Event, instead of editing individual event instances.
+
+==== EnterGoogleCalendarMode - Delete
+The ideas follow the `Edit` section.
+
+==== EnterGoogleCalendarMode - Test
+We need to carry out integration test on Github. +
+However various limits are posted on the usage of APIs, but tests are necessary to run. +
+
+* **Introduce offline mode** (current choice)
+** Pro: Offline mode introduced at the code level to disable Google Calendar methods.
+** Con: Have to write seperate set of tests and helper functions, and control the switch accurately. `enabl()` and `disable()` helper methods are used for tests related to Google Calendar methods.
+
+* **No offline mode** (alternative)
+** Pro: Easy to implement, no additional tests needed.
+** Con: Running the current set of test cases will certainly sending too many requests to Google, and triggers the IP address/ account to be blocked.
+
+*Note on Google Calendar Tests*
+Please ensure only one running PR is running the tests. +
+All tests will be using the `StoredCredential` file to access a test account's google calendar, running the same set of tests.
+
+
+// end::EnterGoogleCalendarMode[]
 
 // tag::dataencryption[]
 === [Proposed] Data Encryption
@@ -607,11 +689,11 @@ versionedScheduler.updateEvents(target, editedEvents, event ->
 
 ===== Aspect: Generation of edited events
 
-* **Alternative 1 (current choice):** Generating edited events based on first instance of event.
+* **Alternative 1 (current choice):** Generating edited events also targets first instance of event.
 ** Pros: For `-a` option, we can generate all the repeating events starting from the first event in repeating event set even when the user targets the second event in the repeating event set.
 +
-E.g. In a set of events: `event A1, event A2 eventA3`, when we input the command `edit 2 rt/weekly -a`, we can check whether `event A1` has the same day of week as `eventA2`. If yes, we generate new events starting from `eventA1` else, start from `eventA2`.
-** Cons: New Events generated will always be based on the first event. So, when edit the `eventA2` *only* first then edit the *whole set (all)* of events starting from the `eventA2`, the subsequent events generated will be based on `eventA1` which overrides any changes that were made individually to `eventA2`.
+E.g. In a set of events: `event A1, event A2 and eventA3`, when we input the command `edit 2 rt/weekly -a`, we can check whether `event A1` has the same day of week as `eventA2`. If yes, we generate new events starting from `eventA1` else, start from `eventA2`.
+** Cons: New Events generated will always be based on the targeted event. So, when edit the `eventA1` *only* first, then edit the *whole set (all)* of events starting from the `eventA2`, the subsequent events generated will be based on `eventA2` which overrides any changes that were made individually to `eventA1`.
 * **Alternative 2:** Generating edited events based on selected event and delete previous events.
 ** Pros: Do not need to be know what is in the model before generating events.
 ** Cons: Events generated may not be as intuitive to users because the if we start editing a repeated event from the second event in a set, the first event will always be deleted.
@@ -621,7 +703,7 @@ E.g. In a set of events: `event A1, event A2 eventA3`, when we input the command
 === Delete Command
 ==== Current Implementation
 
-The `delete` command allows users to add delete existing events in the scheduler. Delete Command is facilitated by the `DeleteCommand` class.
+The `delete` command allows users to delete existing events in the scheduler. Delete Command is facilitated by the `DeleteCommand` class.
 The format of this command is `delete INDEX [-a | -u]`.
 
 `DeleteCommand` requires the interaction between both `Logic` and `Model` Component. The `Logic` component comprises of `DeleteCommandParser`.
@@ -641,80 +723,87 @@ Given below is the execution flow of `Delete Command`.
 
 
 
-// tag::Pop-up Alert[]
-=== Pop-up Alert
+// tag::Reminder Feature[]
+=== Reminder Operations
 
 ==== Current Implementation
-The pop-up function is currently implemented with the `add` and `edit` command as input fields. We will implement a
-separate command `setReminder` for a later iteration.
-The format for input is `[re/xxHxxMxxS]` and multiple inputs are allowed for one event.
+The input is duration in the following format: `[re/xxHxxMxxS]` , meaning a reminder will pop up xxHxxMxxS before the event start time. Multiple unique reminders are allowed for one event. +
 
-* `add ... [/re xxHxxMxxS]` -- set pop-up alert `xxHxxMxxS` before the event start time. +
-   This will be replaced with `setReminder index xxHxxMxxS` in later iteration.
-* `edit ... [/re xxHxxMxxS]` -- change pop-up time for the event. +
-   This will be replaced with `addReminder` and `deleteReminder` commands in a later iteration.
+The reminder operations are first implemented with the `add` and `edit` command as input fields. Commands `addReminder`, `deleteReminder`, `postponeReminder`
+are then implemented by inheriting editCommand class for more customised reminder operations. The differences in logic between three reminder commands and `edit` are explained below:
 
-Pop-up Alert feature requires the interaction between both 'Logic' and 'Model' Component as explained below. The main
-utility responsible for this feature is `PopUpManager`.
+* `addReminder INDEX [/re xxHxxMxxS]...[-a|-u]` +
+   Add reminders INCREMENTALLY to the event, whereas `edit` will replace the reminders of the event by input durations.
+* `deleteReminder INDEX [/re xxHxxMxxS]...[-a|-u]` +
+   Delete reminders if present. If edit is used for delete reminders, user will have to input all the reminders he/she wants to keep.
+* `postponeReminder INDEX [/re xxHxxMxxS] [-a|-u]` +
+   Postpone all reminders of the event by the duration specified.
 
-The storage for pop-up info is together with `Event` object in an XML file. It is stored as a `ReminderDurationList`
-object which is a `HashMap` of `Duration` object (parsed from xxHxxMxxS) and `Boolean` that indicates whether that time
-has popped-up.
-Every time `Event` object is updated or the Scheduler is opened, it will trigger an update in the `PopUpManager`.
+Pop-up Alert feature requires the interaction between both 'Logic' and 'Model' Component as shown by the class diagram and explanation below.
+The class diagram only shows relevant classes for clarity.
 
-`PopUpManager` will call `EventPopUpInfo` in `Model` to generate `EventPopUpInfo` objects according to the number of
-reminder times the event has. If the event has 3 pop-up times,
-it will generate 3 `EventPopUpInfo` with 3 different `PopUp Time` while the rest of the info fields are the same.
+image::ReminderClassDiagram.png[width="700"]
 
-The generated  `EventPopUpInfo` objects will be pushed to the `PopUp Queue` maintained by the `PopUpManager`. Its
-underlying data structure is a `Priority Queue`
-and key of the Reminder Time. When the App is opened, `PopUpManager` runs on a parallel thread to constantly check the
-queue to determine when to pop-up what alert.
-Once the reminder has popped up, `PopUpManager` will use `eventUid` (of `UUID` type) stored in the `PopUpInfo` object to
-find the `Event` and set True corresponding to the `Duration` that has popped up.
+The main utility responsible for this feature is `PopUpManager`, which is implemented in a singleton pattern since it should have no more than just one instance. +
 
-The overall workflow can be represented by the below activity diagram:
+`Event` has a field `ReminderDurationList` which is a set of `Duration` objects. A `Duration` such as `30m` represents the period before the event start time that reminder will pop up.
+Therefore each `Event` object can have multiple unique `Duration` objects in `ReminderDurationList`, and thus multiple reminders. +
 
-image::PopUpActivityDiagram.png[width="500"]
+Each `Duration`, together with the `Event` object itself, will be used by `PopUpManager` to generate 1 `EventPopUpInfo` object, which correspond to 1 reminder. +
 
-Below is an example usage scenario and explanation on the pop-up Alert mechanism behavior behind each step.
+Except for `Duration`, `EventPopUpInfo` object also has a `DateTime` field (PopUpTime) calculated by `Start Time - Duration`. It is the time the corresponding reminder should popped up.
+The rest of the fields of `EventPopUpInfo` is the same as the `Event` object. Descriptive fields such as `Description`, `Venue`, `EndTime` are needed for display reminders.
+While the two IDs are used for `PopUpManager` 's various updating methods. +
 
-**Step 1** +
-The user opens Scheduler. The `PopUpManager` initializes the PopUp Queue and checks if any PopUp should have been popped
-up when the app is closed. +
-For example, the user opens the Scheduler at 10:00. He has a pop-up set at 9:30. It will appear once he opens the app to
-remind him that the event has passed. +
-At the same time, the `PopUpManager` will keep checking the Queue concurrently when the app is open.
+`PopUpManager` takes in `Event` object to generate `EventPopUpInfo` objects and then stores them in a `PriorityQueue` (PopUpQueue)
+order by PopUpTime. The startRunning() method in PopUpManager will run in parallel
+to constantly check when to pop an `EventPopUpInfo` and call `PopUp` in `UI` to display the reminder. +
 
-**Step 2** +
-The user adds a new event "Assignment Due" and he wants to have two pop-up reminders before the deadline. He keys in
-`add n/Assignment Due s/today 10PM /re 4H /re 2H`. +
-The `AddCommandParser` will parse the input to a ReminderDurationList: `4H: False, 2H: False`
-The `AddCommand` will also trigger `PopUpManager` to update the Popup Queue. Two 'EventPopUpInfo' objects with
-'PopUpTime' 6 PM and 8 PM separately will be initiated and added into the PopUp Queue.
-The user can close the Scheduler or use other functions of the Scheduler.
 
-**Step 3** +
-At 6 PM on that day, if the Scheduler is open, a pop-up alert will appear. The `PopUpManager` pop out the corresponding
-`EventPopUpInfo`.
-Meanwhile, it will use the `eventUid` (of `UUID` type) stored in `EventPopUpInfo` to find the `Event` object and set
-`4H: True`. +
-The 8 PM pop-up is still in the Pop-up queue.
+Every time a command is executed and handled by `ModelManager`, `ModelManager` will call relevant method in `PopUpManager` to update PopUpQueue.
+The sequence diagram below illustrate a generic case when user key in `edit` command. Some parts are omitted for clarity. +
+
+image::ReminderSequenceDiagram.png[width="800"]
+
+
+Below is an example usage scenario with sequence diagram to illustrate how `PopUpManager` is updated +
+
+1. The user has a set of recurring events: CS2103 lecture that happen every Friday 4pm - 6pm. He has set reminders to be 1H before the start time.
+
+2. Now is week 7 and the time for the lectures has just changed onwards. So he "edit 7 s/xxx 2pm e/xxx 4pm -u".
+
+3. When updateUpcomingEvents(eventToEdit, editedEvents) in `ModelManager` is called, this method will call editUpcoming(eventToEdit, editedEvents) in `PopUpManager`, which
+runs deleteUpcoming(..) and then add(..) +
+
+4. deleteUpcoming will delete all `EventPopUpInfo` objects that share the same `SetId` with eventToEdit but have
+a later start time. Then add method will generate all editedEvents' corresponding 'EventPopUpInfo' and add them to PopUpQueue.
+
+[Note]
+====
+* At any time, ONLY EventPopUpInfo with PopUpTime in the future will be added to the queue.
+* Any updates to the Scheduler will trigger corresponding updates in PopUpManager.
+====
+
+The updates in `PopUpManager` takes place on the main thread. However, the checking of PopUpQueue takes place on a parallel thread as illustrated by the activity diagram.
+
+image::ReminderActivityDiagram.png[width="500"]
+
 
 ==== Design Considerations
-* **Use HashMap to store ReminderDurationList** (current choice)
-** Pro: Faster searching when deleting. The user can also view the reminder times he has set as part of the event info
-since it will not be deleted when it popped up.
-** Con: More complex implementation
-
-* **Use ArrayList to store ReminderDurationList** (alternative)
-** Store the `Durations` in an ArrayList, every time the `EventPopUpInfo` is popped out, delete the corresponding
-`Duration`
+* **Use Set to store ReminderDurationList** (current choice)
+** Store the `Durations` in a Set. Do nothing to the Set when `EventPopUpInfo` is popped out. Every time adding `EventPopUpInfo` to PopUpQueue,
+only those with future PopUpDateTime will be added.
 ** Pro: Easier implementation
-** Con: Searching and Deleting the Duration will take longer time.
+** Con: Will not be able to keep track of those reminders that have passed when the app is not open. Past reminders cannot pop up when the app opens.
 
-// end::Pop-up Alert[]
+* **Use HashMap to store ReminderDurationList** (alternative)
+** Store as `Duration`: `Boolean` (if the reminder has popped up). Every time a reminder pops up, set to `True`.
+** Pro: Will be able to keep track of those reminders that have passed when the app is not open.
+When the user open the app, `Duration` with `False` will generate corresponding `EventPopUpInfo` to add to the queue.
+They will be popped up as past reminders to remind the users they might have miss some important events.
+** Con: This design will be complicated and affect `undo` and `redo` function.
 
+// end::Reminder Feature[]
 
 // tag::addDeleteListTag[]
 === Add/Delete/List Tags
@@ -1584,8 +1673,7 @@ Use case ends.
 .  Should work on any <<mainstream-os,mainstream OS>> as long as it has Java `9` or higher installed.
 .  Should be able to add events that repeat up to 100 times without any problem.
 .  Should be able to hold up to 1000 events without a noticeable sluggishness in performance for typical usage.
-.  A user with above average typing speed for regular English text (i.e. not code, not system admin commands) should be
-able to accomplish most of the tasks faster using commands than using the mouse.
+.  A user with above average typing speed for regular English text (i.e. not code, not system admin commands) should be able to accomplish most of the tasks faster using commands than using the mouse.
 .  Should work on both 32-bit and 64-bit environments.
 .  Should work without any dependence of other software.
 
@@ -1634,22 +1722,32 @@ These instructions only provide a starting point for testers to work on; testers
 .. Re-launch the app by double-clicking the jar file. +
    Expected: The most recent window size and location are retained.
 
-_{ more test cases ... }_
+=== Adding an event
 
-=== Deleting a event
+. Adds new event(s)
+
+.. Test case: `add n/Study With Yoko s/tomorrow at 3pm d/Study again and again rt/monthly t/ad-hoc` +
+   Expected: Adds an event with event name:'Study with Yoko', start date time:'tomorrow 3pm', description:'study again and again', repeat type:monthly, tag:ad-hoc +
+
+=== Editing an event
+
+. Edits existing events
+
+.. Prerequisites: List all events using the `list` command. Multiple events in the list.
+.. Test case: `edit 1 n/Dinner with Joy` +
+   Expected: Edits the 1st event's event name to Dinner with Joy.
+
+=== Deleting an event
 
 . Deleting an event while all events are listed
 
 .. Prerequisites: List all events using the `list` command. Multiple events in the list.
 .. Test case: `delete 1` +
-   Expected: The first event is deleted from the list. Details of the deleted event shown in the status message.
-Timestamp in the status bar is updated.
+   Expected: The first event is deleted from the list. Event name of the deleted event shown in the status message.
 .. Test case: `delete 0` +
-   Expected: No event is deleted. Error details are shown in the status message. Status bar remains the same.
-.. Other incorrect delete commands to try: `delete`, `delete x` (where x is larger than the list size) _{give more}_ +
+   Expected: No event is deleted. Error details are shown in the status message.
+.. Other incorrect delete commands to try: `delete`, `delete x` (where x is larger than the list size) +
    Expected: Similar to previous.
-
-_{ more test cases ... }_
 
 === Saving data
 
@@ -1658,39 +1756,3 @@ _{ more test cases ... }_
 .. _{explain how to simulate a missing/corrupted file and the expected behavior}_
 
 _{ more test cases ... }_
-
-
-[appendix]
-== Release Plan
-
-*He Xinyi*
-
-- v1.1: Implementation of Pop-up function based on Event start time only +
-- v1.2: Created an input data field to enable customizable pop-up time +
-- v1.3: Full implementation of allowing the pop-up function to update accordingly whenever events are changed
-
-*Zhang Yezhong*
-
-- v1.1 Partial implementation on `GetGCEvents` command +
-- v1.2 Implementation of `GetGCEvents` command +
-- v1.3 Implementation of all relevant commands to sync with Google Calendar in real time +
-- v1.4 Upgraded implementation to synchronous version
-
-*Goh Cheng Yu*
-
-- v1.1: +
-- v1.2: +
-- v1.3: +
-
-*Wu Jiacheng*
-
-- v1.1: Partial implementation of tag book storage +
-- v1.2: Partial implementation of tag functions +
-- v1.3: Full implementation of tag functions +
-
-*Daniel Ng Sze Yao*
-
-- v1.1: Added/updated tests and started with Command Alias feature +
-- v1.2: Fully implemented Command Aliasing feature +
-- v1.3: Implemented a Auto-Completion Feature for Commands as a major feature+
-- v1.4: Updated PPP and tidied up documentation & Improved existing features
