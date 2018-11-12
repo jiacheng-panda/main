@@ -3,6 +3,9 @@ package seedu.scheduler.model;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static seedu.scheduler.logic.commands.CommandTestUtil.VALID_TAG_INTERVIEW;
+import static seedu.scheduler.logic.commands.CommandTestUtil.VALID_TAG_SCHOOL;
+import static seedu.scheduler.logic.commands.CommandTestUtil.VALID_TAG_WORK;
 import static seedu.scheduler.logic.commands.CommandTestUtil.VALID_TAG_UNUSED;
 import static seedu.scheduler.testutil.TypicalEvents.AD_HOC_WORK;
 import static seedu.scheduler.testutil.TypicalEvents.DISCUSSION_WITH_JACK;
@@ -83,13 +86,15 @@ public class SchedulerTest {
     }
 
     @Test
-    public void removeTagTagUsedByMultipleEventsTagRemoved() {
-        schedulerWithDiscussionAndInterview.removeTag(new Tag("Work"));
+    public void removeTagTagUsedByMultipleEventsTagRemoved() throws Exception {
+        schedulerWithDiscussionAndInterview.removeTag(new Tag(VALID_TAG_WORK));
+
         Event discussionWithoutWorkTag = new EventBuilder(DISCUSSION_WITH_JACK)
-                .withTags("Talk", "Personal").build();
-        Event interviewWithoutWorkTag = new EventBuilder(INTERVIEW_WITH_JOHN).withTags("Interview").build();
+                .withTags(VALID_TAG_SCHOOL).build();
+        Event interviewWithoutWorkTag = new EventBuilder(INTERVIEW_WITH_JOHN).withTags(VALID_TAG_INTERVIEW).build();
         Scheduler expectedScheduler = new SchedulerBuilder().withEvent(discussionWithoutWorkTag)
                 .withEvent(interviewWithoutWorkTag).build();
+
         assertEquals(expectedScheduler, schedulerWithDiscussionAndInterview);
     }
 

@@ -19,8 +19,10 @@ import static seedu.scheduler.logic.commands.CommandTestUtil.VALID_REPEAT_UNTIL_
 import static seedu.scheduler.logic.commands.CommandTestUtil.VALID_START_DATETIME_CS2103;
 import static seedu.scheduler.logic.commands.CommandTestUtil.VALID_START_DATETIME_MA2101;
 import static seedu.scheduler.logic.commands.CommandTestUtil.VALID_START_DATETIME_MA3220;
+import static seedu.scheduler.logic.commands.CommandTestUtil.VALID_TAG_INTERVIEW;
 import static seedu.scheduler.logic.commands.CommandTestUtil.VALID_TAG_PLAY;
 import static seedu.scheduler.logic.commands.CommandTestUtil.VALID_TAG_SCHOOL;
+import static seedu.scheduler.logic.commands.CommandTestUtil.VALID_TAG_WORK;
 import static seedu.scheduler.logic.commands.CommandTestUtil.VALID_VENUE_CS2103;
 import static seedu.scheduler.logic.commands.CommandTestUtil.VALID_VENUE_MA2101;
 import static seedu.scheduler.logic.commands.CommandTestUtil.VALID_VENUE_MA3220;
@@ -91,7 +93,7 @@ public class TypicalEvents {
             .withEndDateTime(LocalDateTime.of(2018, 1, 1, 17, 0))
             .withDescription("Talk about personal problems").withVenue("Jack's House")
             .withRepeatType(RepeatType.NONE).withRepeatUntilDateTime(LocalDateTime.of(2018, 1, 1, 17, 0))
-            .withTags("Talk", "Personal")
+            .withTags(VALID_TAG_WORK, VALID_TAG_SCHOOL)
             .withReminderDurationList(getReminderDurationList(0, 2)).build();
     public static final Event INTERVIEW_WITH_JOHN = new EventBuilder()
             .withEventUid(CONSTANT_EVENTUID.get(1))
@@ -101,7 +103,7 @@ public class TypicalEvents {
             .withEndDateTime(LocalDateTime.of(2018, 1, 2, 15, 0))
             .withDescription("Interview for position as a software engineer").withVenue("Jane Street")
             .withRepeatType(RepeatType.NONE).withRepeatUntilDateTime(LocalDateTime.of(2018, 1, 2, 15, 0))
-            .withTags("Interview", "Work")
+            .withTags(VALID_TAG_INTERVIEW, VALID_TAG_WORK)
             .withReminderDurationList(getReminderDurationList(1)).build();
     public static final Event CHRISTMAS = new EventBuilder()
             .withEventUid(UUID.randomUUID())

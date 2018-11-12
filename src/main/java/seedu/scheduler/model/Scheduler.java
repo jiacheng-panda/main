@@ -118,7 +118,7 @@ public class Scheduler implements ReadOnlyScheduler {
         events.remove(key, predicate);
     }
 
-    //// util methods
+
     /**
      * Removes {@code tag} from {@code event} in this {@code Scheduler}.
      */
@@ -135,12 +135,21 @@ public class Scheduler implements ReadOnlyScheduler {
                         event.getReminderDurationList());
         updateEvent(event, newEvent);
     }
+
     /**
      * Removes {@code tag} from all events in this {@code Scheduler}.
      */
     public void removeTag(Tag tag) {
         events.forEach(event -> removeTagFromEvent(tag, event));
     }
+
+    /**
+     * Returns true if a tag with the same identity as {@code tag} exists in the scheduler.
+     */
+    public boolean hasTag(Tag tag) {
+
+    }
+
 
     @Override
     public String toString() {

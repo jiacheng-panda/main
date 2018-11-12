@@ -77,8 +77,10 @@ public class CommandTestUtil {
             1, 1, 2);
     public static final LocalDateTime VALID_REPEAT_UNTIL_DATETIME_MA3220 = LocalDateTime.of(2019, 2,
             2, 2, 3);
-    public static final String VALID_TAG_SCHOOL = "school";
+    public static final String VALID_TAG_INTERVIEW = "Interview";
+    public static final String VALID_TAG_SCHOOL = "School";
     public static final String VALID_TAG_PLAY = "play";
+    public static final String VALID_TAG_WORK = "Work";
     public static final String VALID_TAG_UNUSED = "unused"; // do not use this tag when creating an event
     public static final String VALID_DURATION_1H = "1H";
     public static final String VALID_DURATION_1H30M = "1H30M";

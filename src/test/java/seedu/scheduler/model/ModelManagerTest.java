@@ -1,8 +1,13 @@
 package seedu.scheduler.model;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static seedu.scheduler.model.Model.PREDICATE_SHOW_ALL_EVENTS;
+import static seedu.scheduler.logic.commands.CommandTestUtil.VALID_TAG_INTERVIEW;
+import static seedu.scheduler.logic.commands.CommandTestUtil.VALID_TAG_SCHOOL;
+import static seedu.scheduler.logic.commands.CommandTestUtil.VALID_TAG_UNUSED;
+import static seedu.scheduler.logic.commands.CommandTestUtil.VALID_TAG_WORK;
 import static seedu.scheduler.testutil.TypicalEvents.AD_HOC_WORK;
 import static seedu.scheduler.testutil.TypicalEvents.DISCUSSION_WITH_JACK;
 import static seedu.scheduler.testutil.TypicalEvents.INTERVIEW_WITH_JOHN;
@@ -16,6 +21,9 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import seedu.scheduler.model.event.EventNameContainsKeywordsPredicate;
+import seedu.scheduler.model.event.Event;
+import seedu.scheduler.model.tag.Tag;
+import seedu.scheduler.testutil.EventBuilder;
 import seedu.scheduler.testutil.SchedulerBuilder;
 
 public class ModelManagerTest {
@@ -46,6 +54,36 @@ public class ModelManagerTest {
         thrown.expect(UnsupportedOperationException.class);
         modelManager.getFilteredEventList().remove(0);
     }
+
+    @Test
+    public void deleteTagNonExistentTagModelUnchanged() throws Exception {
+        Scheduler scheduler = new SchedulerBuilder().withEvent(DISCUSSION_WITH_JACK).withEvent(INTERVIEW_WITH_JOHN).build();
+        UserPrefs userPrefs = new UserPrefs();
+
+        ModelManager modelManager = new ModelManager(scheduler, userPrefs);
+        modelManager.deleteTag(new Tag(VALID_TAG_UNUSED));
+
+        assertEquals(new ModelManager(scheduler, userPrefs), modelManager);
+    }
+
+    @Test
+    public void deleteTagTagUsedByMultipleEventsTagRemoved() throws Exception {
+        Scheduler scheduler = new SchedulerBuilder().withEvent(DISCUSSION_WITH_JACK).withEvent(INTERVIEW_WITH_JOHN).build();
+        UserPrefs userPrefs = new UserPrefs();
+
+        ModelManager modelManager = new ModelManager(scheduler, userPrefs);
+        modelManager.deleteTag(new Tag(VALID_TAG_WORK));
+
+        ModelManager expectedModelManager = new ModelManager(scheduler, userPrefs);
+        Event discussionWithoutSchoolTag = new EventBuilder(DISCUSSION_WITH_JACK).withTags(VALID_TAG_SCHOOL).build();
+        Event interviewWithoutSchoolTag = new EventBuilder(INTERVIEW_WITH_JOHN).withTags(VALID_TAG_INTERVIEW).build();
+        expectedModelManager.updateEvent(DISCUSSION_WITH_JACK, discussionWithoutSchoolTag);
+        expectedModelManager.updateEvent(INTERVIEW_WITH_JOHN, interviewWithoutSchoolTag);
+
+        assertEquals(expectedModelManager, modelManager);
+    }
+
+
 
     @Test
     public void equals() {

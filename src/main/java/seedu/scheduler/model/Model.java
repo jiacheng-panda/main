@@ -106,16 +106,6 @@ public interface Model {
      */
     void commitScheduler();
 
-    /**
-     * Returns true if a tag with the same identity as {@code tag} exists in the scheduler.
-     */
-    //boolean hasTag(Tag tag);
-
-    /**
-     * Adds all the given tags.
-     */
-    //void addTags(List<Tag> tags);
-
     /** Removes the given {@code tag} from all {@code Event}s. */
     void deleteTag(Tag tag);
 
