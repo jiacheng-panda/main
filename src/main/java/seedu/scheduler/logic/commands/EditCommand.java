@@ -7,6 +7,7 @@ import static seedu.scheduler.logic.parser.CliSyntax.PREFIX_DESCRIPTION;
 import static seedu.scheduler.logic.parser.CliSyntax.PREFIX_END_DATE_TIME;
 import static seedu.scheduler.logic.parser.CliSyntax.PREFIX_EVENT_NAME;
 import static seedu.scheduler.logic.parser.CliSyntax.PREFIX_EVENT_REMINDER_DURATION;
+import static seedu.scheduler.logic.parser.CliSyntax.PREFIX_REMARK;
 import static seedu.scheduler.logic.parser.CliSyntax.PREFIX_REPEAT_TYPE;
 import static seedu.scheduler.logic.parser.CliSyntax.PREFIX_REPEAT_UNTIL_DATE_TIME;
 import static seedu.scheduler.logic.parser.CliSyntax.PREFIX_START_DATE_TIME;
@@ -39,8 +40,8 @@ import seedu.scheduler.model.event.DateTime;
 import seedu.scheduler.model.event.Description;
 import seedu.scheduler.model.event.Event;
 import seedu.scheduler.model.event.EventName;
-import seedu.scheduler.model.event.ReminderDurationList;
 import seedu.scheduler.model.event.Remark;
+import seedu.scheduler.model.event.ReminderDurationList;
 import seedu.scheduler.model.event.RepeatType;
 import seedu.scheduler.model.event.Venue;
 import seedu.scheduler.model.tag.Tag;
@@ -242,6 +243,7 @@ public class EditCommand extends Command {
                         editEventDescriptor.getEndDateTime().orElse(eventToEdit.getEndDateTime()).value)));
         Description updatedDescription = editEventDescriptor.getDescription().orElse(eventToEdit.getDescription());
         Venue updatedVenue = editEventDescriptor.getVenue().orElse(eventToEdit.getVenue());
+        Remark updatedRemark = eventToEdit.getRemark();  // edit command does not allow editing remarks
         RepeatType updatedRepeatType = editEventDescriptor.getRepeatType().orElse(eventToEdit.getRepeatType());
         DateTime updatedRepeatUntilDateTime = editEventDescriptor.getRepeatUntilDateTime()
                 .orElse(eventToEdit.getRepeatUntilDateTime());
@@ -249,7 +251,7 @@ public class EditCommand extends Command {
         ReminderDurationList updatedReminderDurationList =
                 editEventDescriptor.getReminderDurationList().orElse(eventToEdit.getReminderDurationList());
         Event updatedEvent = new Event(eventUid, eventUuid, updatedEventName, updatedStartDateTime, updatedEndDateTime,
-                updatedDescription, updatedVenue, updatedRepeatType, updatedRepeatUntilDateTime, updatedTags,
+                updatedDescription, updatedVenue, updatedRemark, updatedRepeatType, updatedRepeatUntilDateTime, updatedTags,
                 updatedReminderDurationList);
 
         if (!Event.isValidEventDateTime(updatedStartDateTime, updatedEndDateTime)) {

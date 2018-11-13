@@ -91,6 +91,7 @@ public class SampleSchedulerDataUtil {
                     new DateTime(LocalDateTime.of(2018, 1, 3, 12, 0)),
                     new Description("Study for CS2103"),
                     new Venue("NUS"),
+                    EMPTY_REMARK,
                     RepeatType.DAILY,
                     new DateTime(LocalDateTime.of(2018, 1, 6, 12, 0)),
                     getTagSet("Study", "School"),

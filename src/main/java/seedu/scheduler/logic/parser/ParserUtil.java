@@ -22,6 +22,7 @@ import seedu.scheduler.logic.parser.exceptions.ParseException;
 import seedu.scheduler.model.event.DateTime;
 import seedu.scheduler.model.event.Description;
 import seedu.scheduler.model.event.EventName;
+import seedu.scheduler.model.event.Remark;
 import seedu.scheduler.model.event.ReminderDurationList;
 import seedu.scheduler.model.event.RepeatType;
 import seedu.scheduler.model.event.Venue;
@@ -128,6 +129,16 @@ public class ParserUtil {
         requireNonNull(venue);
         String trimmedVenue = venue.trim();
         return new Venue(trimmedVenue);
+    }
+
+    /**
+     * Parses a {@code String remark} into a {@code Remark}.
+     * Leading and trailing whitespaces will be trimmed.
+     */
+    public static Remark parseRemark(String remark) {
+        requireNonNull(remark);
+        String trimmedRemark = remark.trim();
+        return new Remark(trimmedRemark);
     }
 
     /**

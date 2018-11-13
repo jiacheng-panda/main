@@ -22,6 +22,7 @@ import seedu.scheduler.logic.parser.exceptions.ParseException;
 import seedu.scheduler.model.event.Description;
 import seedu.scheduler.model.event.Event;
 import seedu.scheduler.model.event.EventName;
+import seedu.scheduler.model.event.Remark;
 import seedu.scheduler.model.event.ReminderDurationList;
 import seedu.scheduler.model.event.RepeatType;
 import seedu.scheduler.model.event.Venue;
@@ -179,6 +180,7 @@ public class EventFormatUtil {
         }
         Description description = convertDescriptionToLocalFormatFromGoogleEvent(googleEvent);
         Venue venue = convertVenueToLocalFormatFrom(googleEvent);
+        Remark remark = convertRemarkToLocalFormatFrom(googleEvent);
         //Converts reminders
         ReminderDurationList reminderDurationList =
                 convertReminderDurationListToLocalFormatFromGoogleEvent(googleEvent);
@@ -189,7 +191,7 @@ public class EventFormatUtil {
         RepeatType repeatType = convertsRepeatTypeToLocalFormat(googleEvent, googleICalAndRepeatType);
         //dummy empty tags, not supported to pull from Google
         Set<Tag> tags = Collections.emptySet();
-        return new Event(eventName, startDateTime, endDateTime, description, venue,
+        return new Event(eventName, startDateTime, endDateTime, description, venue, remark,
                 repeatType, repeatUntilDateTime, tags, reminderDurationList);
     }
 
@@ -248,6 +250,16 @@ public class EventFormatUtil {
     private Venue getVenue(com.google.api.services.calendar.model.Event googleEvent) {
         String convertedVenue = googleEvent.getLocation() == null ? "" : googleEvent.getLocation();
         return convertVenueToLocalFormat(convertedVenue);
+    }
+
+    private Remark convertRemarkToLocalFormatFrom(com.google.api.services.calendar.model.Event googleEvent) {
+        assert (googleEvent != null);
+        return getRemark(googleEvent);
+    }
+
+    private Remark getRemark(com.google.api.services.calendar.model.Event googleEvent) {
+        String convertedRemark = googleEvent.getLocation() == null ? "" : googleEvent.getLocation();
+        return convertRemarkToLocalFormat(convertedRemark);
     }
 
     /**
@@ -334,6 +346,11 @@ public class EventFormatUtil {
     private Venue convertVenueToLocalFormat(String convertedVenue) {
         assert (convertedVenue != null);
         return ParserUtil.parseVenue(convertedVenue);
+    }
+
+    private Remark convertRemarkToLocalFormat(String convertedRemark) {
+        assert (convertedRemark != null);
+        return ParserUtil.parseRemark(convertedRemark);
     }
 
     private Description convertDescriptionToLocalFormat(String convertedDescription) {

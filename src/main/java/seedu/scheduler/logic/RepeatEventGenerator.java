@@ -56,6 +56,7 @@ public class RepeatEventGenerator {
                     new DateTime(repeatStartDateTime.plus(durationDiff)),
                     targetEvent.getDescription(),
                     targetEvent.getVenue(),
+                    targetEvent.getRemark(),
                     targetEvent.getRepeatType(),
                     targetEvent.getRepeatUntilDateTime(),
                     targetEvent.getTags(),

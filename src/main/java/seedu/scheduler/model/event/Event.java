@@ -65,21 +65,21 @@ public class Event {
      * Does not take in reminderDurationList, which is set to an Empty ReminderDurationList
      */
     public Event(UUID eventUid, UUID eventSetUid, EventName eventName, DateTime startDateTime, DateTime endDateTime,
-                 Description description, Venue venue,
+                 Description description, Venue venue, Remark remark,
                  RepeatType repeatType, DateTime repeatUntilDateTime, Set<Tag> tags) {
         this(eventUid, eventSetUid, eventName, startDateTime, endDateTime, description,
-                venue, repeatType, repeatUntilDateTime, tags, new ReminderDurationList());
+                venue, remark, repeatType, repeatUntilDateTime, tags, new ReminderDurationList());
     }
 
     /**
      * Does not take in reminderDurationList and eventUid and eventSetUid
      */
     public Event(EventName eventName, DateTime startDateTime, DateTime endDateTime,
-                 Description description, Venue venue,
+                 Description description, Venue venue, Remark remark,
                  RepeatType repeatType, DateTime repeatUntilDateTime, Set<Tag> tags,
                  ReminderDurationList reminderDurationList) {
         this(UUID.randomUUID(), UUID.randomUUID(), eventName, startDateTime, endDateTime,
-                description, venue, repeatType, repeatUntilDateTime,
+                description, venue, remark, repeatType, repeatUntilDateTime,
                 tags, reminderDurationList);
     }
 

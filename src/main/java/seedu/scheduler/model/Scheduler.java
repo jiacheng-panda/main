@@ -130,7 +130,7 @@ public class Scheduler implements ReadOnlyScheduler {
         Event newEvent =
                 new Event(event.getEventUid(), event.getEventSetUid(), event.getEventName(),
                         event.getStartDateTime(), event.getEndDateTime(),
-                        event.getDescription(), event.getVenue(),
+                        event.getDescription(), event.getVenue(), event.getRemark(),
                         event.getRepeatType(), event.getRepeatUntilDateTime(), newTags,
                         event.getReminderDurationList());
         updateEvent(event, newEvent);
