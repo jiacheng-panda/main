@@ -146,9 +146,7 @@ public class Scheduler implements ReadOnlyScheduler {
     /**
      * Returns true if a tag with the same identity as {@code tag} exists in the scheduler.
      */
-    public boolean hasTag(Tag tag) {
-
-    }
+    //public boolean hasTag(Tag tag) { return true; }
 
 
     @Override
