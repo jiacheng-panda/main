@@ -185,6 +185,7 @@ public class Event {
                 && otherEvent.getEndDateTime().equals(getEndDateTime())
                 && otherEvent.getDescription().equals(getDescription())
                 && otherEvent.getVenue().equals(getVenue())
+                && otherEvent.getRemark().equals(getRemark())
                 && otherEvent.getRepeatType().equals(getRepeatType())
                 && otherEvent.getRepeatUntilDateTime().equals(getRepeatUntilDateTime())
                 && otherEvent.getTags().equals(getTags())
@@ -195,7 +196,7 @@ public class Event {
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing our own
         return Objects.hash(eventName, startDateTime, endDateTime, description,
-                venue, repeatType, repeatUntilDateTime, tags, reminderDurationList);
+                venue, remark, repeatType, repeatUntilDateTime, tags, reminderDurationList);
     }
 
     @Override
@@ -210,6 +211,8 @@ public class Event {
                 .append(getDescription())
                 .append(" venue: ")
                 .append(getVenue())
+                .append(" remark: ")
+                .append(getRemark())
                 .append(" repeat type: ")
                 .append(getRepeatType())
                 .append(" repeat until: ")

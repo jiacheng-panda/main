@@ -56,6 +56,7 @@ public class EnterGoogleCalendarModeCommand extends Command {
         if (ConnectToGoogleCalendar.isGoogleCalendarEnabled()) {
             throw new CommandException(MESSAGE_REJECT_SECOND_INITIALIZE);
         }
+        ConnectToGoogleCalendar.setGoogleCalendarEnabled();
         //Get the Google Calendar calendar object
         logger.info("Getting a calendar");
         Calendar calendar = connectToGoogleCalendar.getCalendar();
