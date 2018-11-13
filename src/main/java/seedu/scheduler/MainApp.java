@@ -44,7 +44,7 @@ import seedu.scheduler.ui.Ui;
 import seedu.scheduler.ui.UiManager;
 
 /**
- * The main entry point to the application
+ * The main entry point to the application.
  */
 public class MainApp extends Application {
 

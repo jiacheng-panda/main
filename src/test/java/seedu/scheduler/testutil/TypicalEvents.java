@@ -101,7 +101,8 @@ public class TypicalEvents {
             .withEventName("Interview with John")
             .withStartDateTime(LocalDateTime.of(2018, 1, 2, 13, 0))
             .withEndDateTime(LocalDateTime.of(2018, 1, 2, 15, 0))
-            .withDescription("Interview for position as a software engineer").withVenue("Jane Street").withRemark("Some remarks")
+            .withDescription("Interview for position as a software engineer")
+            .withVenue("Jane Street").withRemark("Some remarks")
             .withRepeatType(RepeatType.NONE).withRepeatUntilDateTime(LocalDateTime.of(2018, 1, 2, 15, 0))
             .withTags(VALID_TAG_INTERVIEW, VALID_TAG_WORK)
             .withReminderDurationList(getReminderDurationList(1)).build();
