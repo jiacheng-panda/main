@@ -274,7 +274,7 @@
         <endDateTime>2018-01-28T10:00</endDateTime>
         <description>Lecture about entrepreneurship</description>
         <venue>iCube</venue>
-        <remark></remark>
+        <remark>Interesting lecturer</remark>
         <repeatType>MONTHLY</repeatType>
         <repeatUntilDateTime>2018-03-28T10:00</repeatUntilDateTime>
         <reminderDurationList>PT15M, PT30M, PT1H, PT1H30M</reminderDurationList>

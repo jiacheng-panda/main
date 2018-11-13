@@ -443,7 +443,7 @@ public class TypicalEvents {
             .withEventName("Startup Lecture")
             .withStartDateTime(LocalDateTime.of(2018, 1, 28, 8, 0))
             .withEndDateTime(LocalDateTime.of(2018, 1, 28, 10, 0))
-            .withDescription("Lecture about entrepreneurship").withVenue("iCube")
+            .withDescription("Lecture about entrepreneurship").withVenue("iCube").withRemark("Interesting lecturer")
             .withRepeatType(RepeatType.MONTHLY)
             .withRepeatUntilDateTime(LocalDateTime.of(2018, 3, 28, 10, 0))
             .withTags("Timetable", "Study", "School")

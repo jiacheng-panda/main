@@ -170,6 +170,14 @@ public class EventBuilder {
     }
 
     /**
+     * Sets the {@code Remark} of the {@code Person} that we are building.
+     */
+    public EventBuilder withRemark(String remark) {
+        this.remark = new Remark(remark);
+        return this;
+    }
+
+    /**
      * Initialise a new {@code Event} instance
      */
     public Event build() {

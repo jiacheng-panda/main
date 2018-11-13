@@ -52,6 +52,7 @@ public class EventCard extends UiPart<Region> {
         endDateTime.setText(event.getEndDateTime().getPrettyString());
         endDateTime.setText(event.getEndDateTime().getPrettyString());
         venue.setText(event.getVenue().value);
+        remark.setText(event.getRemark().value);
         reminderDurationList.setText(event.getReminderDurationList().getDisplayString());
         event.getTags().forEach(tag -> tags.getChildren().add(new Label(tag.tagName)));
     }

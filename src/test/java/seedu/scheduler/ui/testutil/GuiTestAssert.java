@@ -34,6 +34,7 @@ public class GuiTestAssert {
         assertEquals(expectedEvent.getStartDateTime().getPrettyString(), actualCard.getStartDateTime());
         assertEquals(expectedEvent.getEndDateTime().getPrettyString(), actualCard.getEndDateTime());
         assertEquals(expectedEvent.getVenue().value, actualCard.getVenue());
+        assertEquals(expectedEvent.getRemark().value, actualCard.getRemark());
         assertEquals(expectedEvent.getTags().stream().map(tag -> tag.tagName).collect(Collectors.toList()),
                 actualCard.getTags());
     }
