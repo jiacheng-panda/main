@@ -15,7 +15,7 @@ https://github.com/nus-cs2103-AY1819S1/addressbook-level4[Address Book sample ap
 == Summary of contributions
 
 * *Major enhancement*: added *the ability to manage tag and remark of events*
-** What it does: allows the user to add or delete tag from events, and add additional remark to events. 
+** What it does: allows the user to add or delete tag from events, and add additional remark to events.
 ** Justification: This feature improves the product significantly because users can organize their events better and provide extra information for events.
 ** Highlights: This enhancement affects existing commands and commands to be added in future. It required an in-depth analysis of design alternatives. The implementation too was challenging as it required changes to existing commands.
 ** Credits: PR from yamgent on remark command is referenced for the feature. https://github.com/se-edu/addressbook-level4/pull/599
