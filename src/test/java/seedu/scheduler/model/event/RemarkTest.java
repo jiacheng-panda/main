@@ -1,4 +1,4 @@
-package seedu.scheduler.model.person;
+package seedu.scheduler.model.event;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
