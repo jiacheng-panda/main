@@ -863,7 +863,7 @@ Given below is the execution flow of `Delete Tag Command'.
 === Remark Operations
 It is very useful if users can add additional comments/notes about a particular event, by providing a flexible 'remark' field for each event. +
 
-You may add remark to an event by using 'add' command at the beginning, but you cannot do so with 'edit' command. Instead 'remard' command is used to add or edit remark. + 
+You may add remark to an event by using 'add' command at the beginning, but you cannot do so with 'edit' command. Instead 'remard' command is used to add or edit remark. +
 
 ==== Add or edit remark for a event specified in the 'INDEX'.
 Format: `remark INDEX r/[REMARK]`
