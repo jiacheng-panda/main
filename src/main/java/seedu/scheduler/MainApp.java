@@ -1,12 +1,7 @@
 package seedu.scheduler;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -44,11 +39,11 @@ import seedu.scheduler.ui.Ui;
 import seedu.scheduler.ui.UiManager;
 
 /**
- * The main entry point to the application
+ * The main entry point to the application.
  */
 public class MainApp extends Application {
 
-    public static final Version VERSION = new Version(1, 4, 1, true);
+    public static final Version VERSION = new Version(1, 3, 1, true);
 
     private static final Logger logger = LogsCenter.getLogger(MainApp.class);
 
@@ -65,7 +60,6 @@ public class MainApp extends Application {
     public void init() throws Exception {
         logger.info("=============================[ Initializing Scheduler ]====================+=======");
         super.init();
-        initializeGoogleCalenderStatus();
 
         AppParameters appParameters = AppParameters.parse(getParameters());
         config = initConfig(appParameters.getConfigPath());
@@ -90,27 +84,9 @@ public class MainApp extends Application {
     }
 
     /**
-     * Initialize a Google Calender Status file
-     */
-    private void initializeGoogleCalenderStatus() throws IOException {
-        Path currentRelativePath = Paths.get("");
-        String s = currentRelativePath.toAbsolutePath().toString();
-        File path = new File(s + "/tokens");
-        File file = new File(s + "/tokens/mode.txt");
-        if (!file.exists() && !file.isDirectory()) {
-            path.mkdirs();
-            file.createNewFile();
-            Writer writer = new BufferedWriter(new FileWriter(file));
-            writer.write("Disabled");
-            writer.close();
-            logger.info("Status file initiated.");
-        }
-    }
-
-    /**
-     * Returns a {@code ModelManager} with the data from {@code storage}'s scheduler and {@code userPrefs}. <br> The
-     * data from the sample scheduler will be used instead if {@code storage}'s scheduler is not found, or an empty
-     * scheduler will be used instead if errors occur when reading {@code storage}'s scheduler.
+     * Returns a {@code ModelManager} with the data from {@code storage}'s scheduler and {@code userPrefs}. <br>
+     * The data from the sample scheduler will be used instead if {@code storage}'s scheduler is not found,
+     * or an empty scheduler will be used instead if errors occur when reading {@code storage}'s scheduler.
      */
     private Model initModelManager(Storage storage, UserPrefs userPrefs) {
         ReadOnlyScheduler initialSchedulerData = initSchedulerData(storage);
@@ -119,8 +95,10 @@ public class MainApp extends Application {
     }
 
     /**
-     * Returns a {@code ReadOnlyScheduler}. The file {@code SampleSchedulerDataUtil#getSampleScheduler} will be used if
-     * there is no scheduler present in storage. A new Scheduler will be used if error occurs.
+     * Returns a {@code ReadOnlyScheduler}.
+     * The file {@code SampleSchedulerDataUtil#getSampleScheduler} will be used
+     * if there is no scheduler present in storage.
+     * A new Scheduler will be used if error occurs.
      */
     private ReadOnlyScheduler initSchedulerData(Storage storage) {
         Optional<ReadOnlyScheduler> schedulerOptional;
@@ -146,8 +124,9 @@ public class MainApp extends Application {
     }
 
     /**
-     * Returns a {@code Config} using the file at {@code configFilePath}. <br> The default file path {@code
-     * Config#DEFAULT_CONFIG_FILE} will be used instead if {@code configFilePath} is null.
+     * Returns a {@code Config} using the file at {@code configFilePath}. <br>
+     * The default file path {@code Config#DEFAULT_CONFIG_FILE} will be used instead
+     * if {@code configFilePath} is null.
      */
     protected Config initConfig(Path configFilePath) {
         Config initializedConfig;
@@ -181,8 +160,9 @@ public class MainApp extends Application {
     }
 
     /**
-     * Returns a {@code UserPrefs} using the file at {@code storage}'s user prefs file path, or a new {@code UserPrefs}
-     * with default configuration if errors occur when reading from the file.
+     * Returns a {@code UserPrefs} using the file at {@code storage}'s user prefs file path,
+     * or a new {@code UserPrefs} with default configuration if errors occur when
+     * reading from the file.
      */
     protected UserPrefs initPrefs(UserPrefsStorage storage) {
         Path prefsFilePath = storage.getUserPrefsFilePath();
@@ -231,6 +211,7 @@ public class MainApp extends Application {
     @Override
     public void stop() {
         logger.info("============================ [ Stopping Scheduler ] =============================");
+        // model.syncWithPopUpManager(PopUpManager.getInstance(), storage);
         ui.stop();
         try {
             storage.saveUserPrefs(userPrefs);

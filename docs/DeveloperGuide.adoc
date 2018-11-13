@@ -585,7 +585,7 @@ Certain properties of the application can be controlled (e.g App name, logging l
 
 The `add` command allows the user to add new events to the scheduler. Add Command is facilitated by the `AddCommand`
 class.
-The format of this command is `add event n/EVENT_NAME [s/START_DATETIME] [e/END_DATETIME] [d/DESCRIPTION] [v/VENUE]
+The format of this command is `add event n/EVENT_NAME [s/START_DATETIME] [e/END_DATETIME] [d/DESCRIPTION] [v/VENUE] [r/REMARK]
 [rt/RECURRING_TYPE] [ru/RECURRING_UNTIL_DATETIME] [t/TAG]…​`.
 
 The command uses Natty, a natural language date parser written in Java to parse `DateTime` given by the user. When given
