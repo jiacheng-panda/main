@@ -1,7 +1,12 @@
 package seedu.scheduler;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -60,6 +65,7 @@ public class MainApp extends Application {
     public void init() throws Exception {
         logger.info("=============================[ Initializing Scheduler ]====================+=======");
         super.init();
+        initializeGoogleCalenderStatus();
 
         AppParameters appParameters = AppParameters.parse(getParameters());
         config = initConfig(appParameters.getConfigPath());
@@ -81,6 +87,24 @@ public class MainApp extends Application {
         popUp = initPopUpManager();
 
         initEventsCenter();
+    }
+
+    /**
+     * Initialize a Google Calender Status file
+     */
+    private void initializeGoogleCalenderStatus() throws IOException {
+        Path currentRelativePath = Paths.get("");
+        String s = currentRelativePath.toAbsolutePath().toString();
+        File path = new File(s + "/tokens");
+        File file = new File(s + "/tokens/mode.txt");
+        if (!file.exists() && !file.isDirectory()) {
+            path.mkdirs();
+            file.createNewFile();
+            Writer writer = new BufferedWriter(new FileWriter(file));
+            writer.write("Disabled");
+            writer.close();
+            logger.info("Status file initiated.");
+        }
     }
 
     /**
