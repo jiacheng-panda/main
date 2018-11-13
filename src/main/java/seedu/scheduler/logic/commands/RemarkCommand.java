@@ -6,8 +6,8 @@ import static seedu.scheduler.model.Model.PREDICATE_SHOW_ALL_EVENTS;
 
 import java.util.List;
 
-import seedu.scheduler.commons.core.index.Index;
 import seedu.scheduler.commons.core.Messages;
+import seedu.scheduler.commons.core.index.Index;
 import seedu.scheduler.logic.CommandHistory;
 import seedu.scheduler.logic.commands.exceptions.CommandException;
 import seedu.scheduler.model.Model;
@@ -36,7 +36,7 @@ public class RemarkCommand extends Command {
     private final Remark remark;
 
     /**
-     * @param index of the person in the filtered person list to edit the remark
+     * @param index  of the person in the filtered person list to edit the remark
      * @param remark of the person to be updated to
      */
     public RemarkCommand(Index index, Remark remark) {
@@ -55,9 +55,10 @@ public class RemarkCommand extends Command {
         }
 
         Event eventToEdit = lastShownList.get(index.getZeroBased());
-        Event editedEvent = new Event(eventToEdit.getEventUid(), eventToEdit.getEventSetUid(), eventToEdit.getEventName(),
-                eventToEdit.getStartDateTime(), eventToEdit.getEndDateTime(), eventToEdit.getDescription(),
-                eventToEdit.getVenue(), remark, eventToEdit.getRepeatType(), eventToEdit.getRepeatUntilDateTime(),
+        Event editedEvent = new Event(eventToEdit.getEventUid(), eventToEdit.getEventSetUid(),
+                eventToEdit.getEventName(), eventToEdit.getStartDateTime(),
+                eventToEdit.getEndDateTime(), eventToEdit.getDescription(), eventToEdit.getVenue(),
+                remark, eventToEdit.getRepeatType(), eventToEdit.getRepeatUntilDateTime(),
                 eventToEdit.getTags(), eventToEdit.getReminderDurationList());
 
         model.updateEvent(eventToEdit, editedEvent);

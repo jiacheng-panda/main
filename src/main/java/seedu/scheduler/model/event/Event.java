@@ -111,7 +111,9 @@ public class Event {
         return venue;
     }
 
-    public Remark getRemark() { return remark; }
+    public Remark getRemark() {
+        return remark;
+    }
 
     public RepeatType getRepeatType() {
         return repeatType;

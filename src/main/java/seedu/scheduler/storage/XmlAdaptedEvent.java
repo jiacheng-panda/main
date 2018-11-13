@@ -200,8 +200,9 @@ public class XmlAdaptedEvent {
 
         final ReminderDurationList modelReminderDurationList = reminderDurationList;
 
-        return new Event(modelUid, modelUuid, modelName, modelStartDateTime, modelEndDateTime, modelDescription,
-                modelVenue, modelRemark, modelRepeatType, modelRepeatUntilDateTime, modelTags, modelReminderDurationList);
+        return new Event(modelUid, modelUuid, modelName, modelStartDateTime,
+                modelEndDateTime, modelDescription, modelVenue, modelRemark,
+                modelRepeatType, modelRepeatUntilDateTime, modelTags, modelReminderDurationList);
     }
 
     @Override

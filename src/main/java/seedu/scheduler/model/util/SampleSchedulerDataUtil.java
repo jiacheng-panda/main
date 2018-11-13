@@ -15,8 +15,8 @@ import seedu.scheduler.model.event.DateTime;
 import seedu.scheduler.model.event.Description;
 import seedu.scheduler.model.event.Event;
 import seedu.scheduler.model.event.EventName;
-import seedu.scheduler.model.event.ReminderDurationList;
 import seedu.scheduler.model.event.Remark;
+import seedu.scheduler.model.event.ReminderDurationList;
 import seedu.scheduler.model.event.RepeatType;
 import seedu.scheduler.model.event.Venue;
 import seedu.scheduler.model.tag.Tag;
@@ -25,6 +25,8 @@ import seedu.scheduler.model.tag.Tag;
  * Contains utility methods for populating {@code Scheduler} with sample data.
  */
 public class SampleSchedulerDataUtil {
+    public static final Remark EMPTY_REMARK = new Remark("");
+
     private static final ArrayList<UUID> CONSTANT_EVENTUID = new ArrayList<>(Arrays.asList(
             UUID.fromString("066db0fd-0bd2-423f-aef4-fd1f8d30a621"),
             UUID.fromString("066db0fd-0bd2-423f-aef4-fd1f8d30a622"),
@@ -43,8 +45,6 @@ public class SampleSchedulerDataUtil {
             UUID.fromString("066db0fd-0bd2-423f-aef4-fd1f8d30a634"),
             UUID.fromString("066db0fd-0bd2-423f-aef4-fd1f8d30a635"),
             UUID.fromString("066db0fd-0bd2-423f-aef4-fd1f8d30a636")));
-
-    public static final Remark EMPTY_REMARK = new Remark("");
 
     public static Event[] getSampleEvents() {
         return new Event[] {
