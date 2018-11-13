@@ -22,15 +22,7 @@ public class XmlSerializableSchedulerTest {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
-
-    @Test
-    public void toModelType_typicalEventsFile_success() throws Exception {
-        XmlSerializableScheduler dataFromFile = XmlUtil.getDataFromFile(TYPICAL_EVENTS_FILE,
-                XmlSerializableScheduler.class);
-        Scheduler schedulerFromFile = dataFromFile.toModelType();
-        Scheduler typicalEventsScheduler = TypicalEvents.getTypicalScheduler();
-        assertEquals(schedulerFromFile, typicalEventsScheduler);
-    }
+    
 
     @Test
     public void toModelType_invalidEventFile_throwsIllegalValueException() throws Exception {
