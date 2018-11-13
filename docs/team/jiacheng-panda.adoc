@@ -36,7 +36,7 @@ that allow the users to more easily manage tag and remark of events.
 *** Managed milestones
 *** Maintained the issue trackers
 ** Documentation:
-*** Update documentation for Tag and Remark Feature. Enhanced documentations for `add`, `edit` commands in the User Guide (Pull requests https://github.com/CS2103-AY1819S1-F11-1/main/pull/121[#121], https://github.com/CS2103-AY1819S1-F11-1/main/pull/258[#258], https://github.com/CS2103-AY1819S1-F11-1/main/pull/291[#291])
+*** Update documentation for Tag and Remark Feature. Enhanced documentations for `add`, `edit` commands in the User Guide (Pull requests https://github.com/CS2103-AY1819S1-F11-1/main/pull/121[#299])
 
 == Contributions to the User Guide
 
@@ -44,8 +44,11 @@ that allow the users to more easily manage tag and remark of events.
 |_Given below are sections I contributed to the User Guide. They showcase my ability to write documentation targeting end-users._
 |===
 
-3.9. Reminder Operations
-include::../UserGuide.adoc[tag=Reminder Feature]
+3.10. Tag Operations
+include::../UserGuide.adoc[tag=Tag Feature]
+
+3.11. Remark Operations
+include::../UserGuide.adoc[tag=Remark Feature]
 
 == Contributions to the Developer Guide
 
@@ -53,5 +56,8 @@ include::../UserGuide.adoc[tag=Reminder Feature]
 |_Given below are sections I contributed to the Developer Guide. They showcase my ability to write technical documentation and the technical depth of my contributions to the project._
 |===
 
-3.9. Reminder Operations
-include::../DeveloperGuide.adoc[tag=Reminder Feature]
+3.10. Tag Operations
+include::../DeveloperGuide.adoc[tag=Tag Operations]
+
+3.11. Remark Operations
+include::../DeveloperGuide.adoc[tag=Remark Operations]

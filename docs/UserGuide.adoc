@@ -513,7 +513,7 @@ Reminders displayed become: 0S. Reminders will pop up right at the start time.
 
 
 // tag::Tag Feature[]
-=== Tag Operation : `add` 'deleteTag'
+=== Tag Operation: `add` 'deleteTag'
 Customised command to delete a tag from all events. +
 
 You may add any number of tags to an event by using 'add' command, or edit tags with 'edit' command. +
@@ -549,7 +549,7 @@ You may add remark to an event by using 'add' command at the beginning, but you 
 
 ==== Add or edit remark for a event: `remark`
 Add or edit remark for a event in the scheduler. +
-Format: `remark INDEX r/REMARK`
+Format: `remark INDEX r/[REMARK]`
 
 Examples:
 
