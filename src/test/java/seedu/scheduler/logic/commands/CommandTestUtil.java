@@ -82,6 +82,8 @@ public class CommandTestUtil {
     public static final String VALID_TAG_PLAY = "play";
     public static final String VALID_TAG_WORK = "Work";
     public static final String VALID_TAG_UNUSED = "unused"; // do not use this tag when creating an event
+    public static final String VALID_REMARK_DISCUSSION = "It's about CS2103 project.";
+    public static final String VALID_REMARK_INTERVIEW = "Job Interview with Company xyz.";
     public static final String VALID_DURATION_1H = "1H";
     public static final String VALID_DURATION_1H30M = "1H30M";
     public static final String VALID_DURATION_30M = "30M";

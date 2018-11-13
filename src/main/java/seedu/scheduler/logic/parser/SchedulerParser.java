@@ -22,6 +22,7 @@ import seedu.scheduler.logic.commands.HistoryCommand;
 import seedu.scheduler.logic.commands.ListCommand;
 import seedu.scheduler.logic.commands.PostponeReminderCommand;
 import seedu.scheduler.logic.commands.RedoCommand;
+import seedu.scheduler.logic.commands.RemarkCommand;
 import seedu.scheduler.logic.commands.SelectCommand;
 import seedu.scheduler.logic.commands.UndoCommand;
 import seedu.scheduler.logic.parser.exceptions.ParseException;
@@ -62,7 +63,6 @@ public class SchedulerParser {
         case EditCommand.COMMAND_ALIAS_ONE:
         case EditCommand.COMMAND_ALIAS_TWO:
             return new EditCommandParser().parse(arguments);
-
 
         case AddReminderCommand.COMMAND_WORD:
             return new AddReminderCommandParser().parse(arguments);
@@ -145,6 +145,9 @@ public class SchedulerParser {
         case RedoCommand.COMMAND_ALIAS_TWO:
         case RedoCommand.COMMAND_ALIAS_THREE:
             return new RedoCommand();
+
+        case RemarkCommand.COMMAND_WORD:
+            return new RemarkCommandParser().parse(arguments);
 
         default:
             throw new ParseException(MESSAGE_UNKNOWN_COMMAND);

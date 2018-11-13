@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static seedu.scheduler.commons.core.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.scheduler.commons.core.Messages.MESSAGE_UNKNOWN_COMMAND;
+import static seedu.scheduler.logic.parser.CliSyntax.PREFIX_REMARK;
 import static seedu.scheduler.testutil.TypicalIndexes.INDEX_FIRST_EVENT;
 
 import java.util.Arrays;
@@ -26,6 +27,7 @@ import seedu.scheduler.logic.commands.HelpCommand;
 import seedu.scheduler.logic.commands.HistoryCommand;
 import seedu.scheduler.logic.commands.ListCommand;
 import seedu.scheduler.logic.commands.RedoCommand;
+import seedu.scheduler.logic.commands.RemarkCommand;
 import seedu.scheduler.logic.commands.SelectCommand;
 import seedu.scheduler.logic.commands.UndoCommand;
 import seedu.scheduler.logic.parser.exceptions.ParseException;
@@ -74,6 +76,14 @@ public class SchedulerParserTest {
     public void parseCommand_exit() throws Exception {
         assertTrue(parser.parseCommand(ExitCommand.COMMAND_WORD) instanceof ExitCommand);
         assertTrue(parser.parseCommand(ExitCommand.COMMAND_WORD + " 3") instanceof ExitCommand);
+    }
+
+    @Test
+    public void parseCommand_remark() throws Exception {
+        final String remark = "Some remark.";
+        RemarkCommand command = (RemarkCommand) parser.parseCommand(RemarkCommand.COMMAND_WORD + " "
+                + INDEX_FIRST_EVENT.getOneBased() + " " + PREFIX_REMARK + remark);
+        assertEquals(new RemarkCommand(INDEX_FIRST_EVENT, remark), command);
     }
 
     @Test
