@@ -9,7 +9,12 @@
 
 == Overview
 
-iScheduler Xs Max is a desktop scheduler application morphed from the original Address Book sample application (Level 4). As its name suggests, it is used for scheduling events. The user interacts with it using a CLI, and it has a GUI created with JavaFX. It is written in Java, and has about 20 kLoC.
+iScheduler Xs Max is a desktop scheduler application morphed from the original
+https://github.com/nus-cs2103-AY1819S1/addressbook-level4[Address Book sample application (Level 4)]. As its name suggests, it is used for scheduling events and taskss. The user interacts with it using a CLI, and it has a GUI created with JavaFX. It is written in Java, and has about 10 kLoC. +
+
+This product is targetting at University students who have many tasks to handle such as homework deadlines, weekly lectures and tutorials, anniversaries with families and more. +
+
+The postfix 'Xs Max' indicates a great improvement from the previous version of the product as it now supports Google Calendar! +
 
 == Summary of contributions
 

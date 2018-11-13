@@ -125,6 +125,41 @@ When you are ready to start coding,
 1. Get some sense of the overall design by reading <<Design-Architecture>>.
 2. Take a look at <<GetStartedProgramming>>.
 
+==== Setup for Google checks
+
+1. Locate the file `ConnectToGoogleeCalendarTest.Java`
+
+2. Find the test case `getCalendar()`
+
+3. Locate the line +
+
+`assertEquals("cs21031819f111tester@gmail.com", getFromGoogleCalendar.getId());`
+
+Change the email address to your google email address
+
+Edited line: assertEquals("[Your Google Email Address]", getFromGoogleCalendar.getId()); +
+
+eg. "CS2103@gmail.com"
+
+==== Setup for welcome page
+
+Go to `BrowserPanel.java`
+
+Locate the method `runDelayAction` and the line with a delay time +
+
+`new java.util.Timer().schedule( +
+                new java.util.TimerTask() { +
+                    @Override +
+                    public void run() { +
+                        runnable.run(); +
+                    } +
+                }, +
+                [999999000] <-delay time +
+        );` +
+
+Currently, this number is a large number. When deployed to the user, please change to an expected time for the user to see the welcome page (such as `45000` for 45 seconds)
+
+
 == Design
 
 [[Design-Architecture]]
@@ -391,56 +426,52 @@ Single Responsibility Principle and Separation of Concerns as `HistoryManager` n
 
 ==== Current Implementation
 
-The EnterGoogleCalendarMode mechanism is facilitated by utility method to get Google authentication and enables the Google Calendar feature. It implements the following operations:
+The EnterGoogleCalendarMode mechanism is facilitated by the utility methods to get Google authentication and enables the Google Calendar feature. It implements the following operations:
 
-* `EnterGoogleCalendarMode` -- Enable the Google Calendar feasture and , get (pull) the online Google Calendar events and merge with local events.
-* `postGoogleCalendarEvents`[coming in v2.0] -- Post (push) the local events and merge with online Google Calendar.
+* `EnterGoogleCalendarMode` -- Enables the Google Calendar feature and, gets (pulls) the online Google Calendar events and merge with local events.
+* `postGoogleCalendarEvents`[in v2.0] -- Posts (push) the local events and merge with online Google Calendar.
 
+It also supports the following existing features, to enhance them with real-time effects on Google Calendar, when the Google Calendar feature is enabled. For each commond, the local input is converted to a Google acceptable command word (it is referred as GoogleFormat here in this app) to instruct Google Calendar. +
 
-It also supports the following existing features, to enhance the with real-time effects on Google Calendar (those created with the app)
-* `Add` -- When the Google Calendar feature is enabled, the app creates the same event(s) in the google calendar.
-* `Edit` -- When the Google Calendar feature is enabled, the app edits the same event(s) in the google calendar.
-* `Delete` -- When the Google Calendar feature is enabled, the app deletes the same event(s) in the google calendar.
-* `Clear` -- When the Google Calendar feature is enabled, the app clears the primary google calendar.
-*The Event(s) mentioned above refer to those created by the app. The existing ones are not supproted yet. Even they are pulled to local database, commonds have no effect on them, as mentioned in the UserGuide*
+* `Add` -- creates the same event(s) in the google calendar.
+* `Edit` with no postfix or `a` or `u`-- edits the same event(s) in the google calendar.
+* `Delete` with no postfix or `a` or `u`-- deletes the same event(s) in the google calendar.
+* `Clear` -- clears the primary google calendar. +
+*The Event(s) mentioned above refer to those created by the app. The existing ones are not supported. Even they are pulled to the local database, commands have no effect on them, as mentioned in the user guide.*
 
 Below is an example usage scenario and explanation on the `EnterGoogleCalendarMode` mechanism behavior behind each step.
 
 **Step 1** +
--> The user has always been using the application locally and never enabled this feasure. +
--> All Scheduler Events have been created locally. That is, the Scheduler has only local events (no Google Calendar Events).
-
+-> The user has never enabled this feasure and would like to get user's evets from user's Google Calendar. +
 -> An empty database is illustrated below as an imaginary array:
 
-image::EmptyLocalDataBaseDiagram.png[width="150"]
+image::EmptyLocalDataBaseDiagram.png[width="130"]
 
 **Step 2** +
--> The user executes `EnterGoogleCalendarMode` command to enable the feature. download the Google Calendar Events to the local database. +
+-> The user executes `EnterGoogleCalendarMode` command to enable the feature.
+-> The application checks for whether the feature has already been enabled. If it is enabled, the command is rejected. This is because the method is an initialization method. Second initialization is rejected.
 
--> A `Calendar` object is to be built with method `getCalendar()` in `ConnectToGoogleCalendar.java` +
--> A method `getNetHttpTransport()` is called to let application establish a connection with Google to initiate an authorization process (for those who use this command for the  first time).
+**Step 3** +
+-> The application starts to download the Google Calendar Events to the local database. +
+-> A `calendar` object is to be built with method `getCalendar()` in `ConnectToGoogleCalendar.java` +
+-> A method `getNetHttpTransport()` is called to let application establish a connection with Google to initiate an authorization process (for those who use this command for the first time).
 
 -> A pop-up window will appear. The User will be required to log in their Google Account as per other Google Service. +
 After successful login, the login credential will be saved locally such that no future log-in is required. +
 
-**Step 3** +
+**Step 4** +
 -> After successful authentication, a success message is shown for the user and instruct the user to close the browser.
-+
--> At the same time, the application proceeds automatically for the downloading and merging of Google Calendar's events
-to local events. +
+-> At the same time, the application proceeds automatically for the downloading and merging of Google Calendar's events to local events. +
 -> The flowchart below shows the process of deciding whether to prompt a login page or to proceed with a local
 credential file:
 
 image::flowChatForDecisionOnLogIn.png[width="350"]
 
-[NOTE]
+[WARNING]
 ====
-For developers, if you test the application locally, please do not include this log-in credential file to the `out/production` package. +
+Please do not include this log-in credential file to the `out/production` package. +
 Errors could occur when the user downloads and uses it.
 ====
-
-**Step 4** +
--> The application checks for whether the feature has already been enabled. If it is enabled, the command is rejected. This is because the method is an initialization method. Second initialization is rejected.
 
 **Step 5** +
 -> The application will then call method `getEvents` to extract a (Google)`Events` objects from the user’s online Google Calendar.
@@ -450,12 +481,17 @@ For current implementation, only events in the primary (default) calendar are ex
 ====
 
 **Step 6** +
--> For each event extracted, various ConvertEvent utility methods will be called to convert the Google Extracted Event to local Event.
+-> For each event extracted, various utility methods will be called to convert the Google Extracted Event to local Event.
+
+[NOTE]
+====
+When the event type is not supported, an error is shown to the user.
+====
 
 **Step 7** +
 -> The converted events are saved in the local database, together with other locally created Events.
 
-==== Design Considerations for EnterGoogleCalendarMode
+===== Design Considerations: log in
 * **Save local login credential** (current choice)
 ** Pro: Improves the user experience -- user won’t have to log in every time they use this command, it would be too
 troublesome and not user-friendly.
@@ -465,28 +501,8 @@ troublesome and not user-friendly.
 ** Pro: Very secured.
 ** Con: Not user-friendly.
 
-==== EnterGoogleCalendarMode - Add
-Below is an example usage scenario and explanation on the `Add` mechanism behavior behind each step.
-
-After the user enabled the Google Calendar feature, when the command `add n/Online Shopping! s/Dec 12, 2018 5pm e/Dec 12, 2018 7pm re/2H` is entered.
-
-**Step 1** +
--> The local event is generated.
-
-**Step 2** +
--> The `toAdd` Event is captured and send to `pushToGoogleCal` method.
-
-**Step 3** +
-->Regardless of whether the Event is a single event or a repeated event. `pushToGoogleCal` method sets the common attributes such as `EventName`, `Venue(Location)`, `Description`, `StartDateTime`, `EndDateTime` and `Reminders`.
-
-**Step 4** +
--> If it is a RepeatEvent, set special attributes to it such as `googleRecurringEventId`, `googleiCalId`, `eventRepeatType`,`eventUntilDateTime`. A Google specific `commandMessage` is constructed and sent to Google API.
-
-Various convertion methods are called to convert the Event format from local Event to Google Event.
-
-==== Design Considerations  - Add
-
-A common identifier is needed to uniquelly identify the same Event in local database and in Google Calendar.
+===== Design Considerations: Unique Identifier for event
+A common identifier is needed to uniquely identify the same Event in the local database and in Google Calendar.
 
 * **Use Event Unique Id and EventSet Unique Id** (current choice)
 ** Pro: It is unique and randomly generated.
@@ -498,34 +514,22 @@ EventSetUid == iCalId
 ** Pro: Very easy to implement
 ** Con: User unable to create events with the same name.
 
-==== EnterGoogleCalendarMode - Edit
+===== Design Considerations: add to local database
+* **Only the Single Event and Repeat Underlying Parent Event is extracted.** (current choice)
+** Pro: Match with local implementation of adding Single Event and RepeatEvent. This also ensures Single Event having a unique EventUid and all RepeatEvent instances generated having the same EventSetUid.
+** Con: Harder to implement because has to filter out the Event instances (generated by Google Parent Event) of the Repeat Event.
 
-**Step 1** +
-->Command `clear` +
-Cleans up the enviroment
+* **Get all Event instances directly** (alternative)
+** Pro: Easy to implement.
+** Con: Unable to differentiate Single Event and RepeatEvent when they are downloaded. `Edit` and `Delete` command with postfix -a and -u will not able to work anymore.
 
-**Step 2** +
-->Command `add n/Study For next sem s/2018-12-1 9pm e/2018-12-1 10pm rt/WEEKLY ru/2018-12-25 9pm`
-to create a repeat event, this event will trigger Google to create 4 Event Instances
+==== EnterGoogleCalendarMode - Support for existing commands
+Google APIs does *not* provide necessary methods to get each of the Event properties.
+For `Command Word`, in order to have a real-time effect on Google Calendar, each local command word is converted to Google Command using various written utility methods. +
+Moreover, to facilitate the `Events` to be upload (from Add), edited and deleted. Utilities methods are written to translate each Event property such as `EventName`, `Event`, `StartDateTimme`, `EndDateTime`, `RepeatUntilDateTime`, `Venue` and so on. +
+With all abovementioned conversions, major existing functions are enhanced with the ability to communicate with Google Calendar. The activity diagram for the conversion of both types of event is shown below.
 
-**Step 3** +
-->Command `edit 1 n/change1` +
-Only the first event will be edited, its name will become change1. +
-A command requst will be sent to edit the first event instance.
-
-**Step 4** +
-`edit 2 n/change2 -u`+
-The first event is untouched. +
-The event instances from the second one onwards in the same EventSet will be edited, their name swill become change2. +
-A command requst will be sent to edit the various event instances.
-
-**Step 5** +
-`edit 3 n/change3 -a`+
-All event instances in the same EventSet will be edited, their name swill become change3. +
-A command requst will be sent to edit the underlying Event, instead of editing individual event instances.
-
-==== EnterGoogleCalendarMode - Delete
-The ideas follow the `Edit` section.
+image::activityEventConvertion.png[width="600"]
 
 ==== EnterGoogleCalendarMode - Test
 We need to carry out integration test on Github. +
@@ -533,17 +537,14 @@ However various limits are posted on the usage of APIs, but tests are necessary 
 
 * **Introduce offline mode** (current choice)
 ** Pro: Offline mode introduced at the code level to disable Google Calendar methods.
-** Con: Have to write seperate set of tests and helper functions, and control the switch accurately. `enabl()` and `disable()` helper methods are used for tests related to Google Calendar methods.
+** Con: Have to write a separate set of tests and helper functions, and control the switch accurately. `enable()` and `disable()` helper methods are used for tests related to Google Calendar methods.
 
 * **No offline mode** (alternative)
 ** Pro: Easy to implement, no additional tests needed.
 ** Con: Running the current set of test cases will certainly sending too many requests to Google, and triggers the IP address/ account to be blocked.
 
-*Note on Google Calendar Tests*
-Please ensure only one running PR is running the tests. +
-All tests will be using the `StoredCredential` file to access a test account's google calendar, running the same set of tests.
-
-
+*Note on Google Calendar Tests* +
+Please ensure only *one* running PR. This is because all PRs are running the same set of tests, and applying effects to the same test account. The `StoredCredential` file is to provide access to the test account's google calendar.
 // end::EnterGoogleCalendarMode[]
 
 // tag::dataencryption[]
@@ -1683,6 +1684,16 @@ Use case ends.
 [[mainstream-os]] Mainstream OS::
 Windows, Linux, Unix, OS-X
 
+[[Event]] Event::
+a Event only happen once
+
+[[RepeatEvent]] RepeatEvent::
+a Event happen more than once or once
+This is used interchangebly as EventSet
+
+[[EventInstances]] EventInstances::
+The repeated event instances
+
 [appendix]
 == Product Survey
 
@@ -1749,10 +1760,65 @@ These instructions only provide a starting point for testers to work on; testers
 .. Other incorrect delete commands to try: `delete`, `delete x` (where x is larger than the list size) +
    Expected: Similar to previous.
 
+=== Tests in Google Calendar Mode
+Since Google Calendar only is not able to have the same set of pre-existing events as we did in the local testing. You shall follow the following commands to test out the functions.
+
+==== EnterGoogleCalendarMode - Enable
+Enter command word `EnterGoogleCalendarMode`.
+Expected: Enable the feature and download the events in Google Calendar if their format is supported.
+
+If entered successfully, +
+Enter command word `EnterGoogleCalendarMode`.
+Expected: error message: "Note that you are only allowed to initialize the app once. You have already initialized it before. Command rejected"
+
+==== EnterGoogleCalendarMode - `Edit` / `Delete` Events Not on Google
+Please follow the command mentioned in the "Editing an event" section to edit a local Event (not in your Google Calendar).
+Expected: Suceefuly message on the local event, if successful. +
+with another message "Only local changes, no effects on your Google Calendar." if internet connection is good.
+
+
+==== EnterGoogleCalendarMode - Add
+Below is an example usage scenario of adding events with real-time effect on Google Calendar.
+
+After enabling the Google Calendar feature, +
+Enter command `add n/Online Shopping! s/Dec 12, 2018 5pm e/Dec 12, 2018 7pm re/2H`
+
+Expected: both a local event and Google Event is generated.
+
+==== EnterGoogleCalendarMode - Edit and Delete
+
+**Step 1** +
+-> *Optional*: Command `clear` +
+Cleans up the enviroment
+[WARNING]
+As mentioned in UserGuide, if anyone else is using the same account, you are effectively using the same Google Calendar. This command clears the Google Events on Google Calendar. The other people using the same account might be surprised by seeing events disappeared.
+
+**Step 2** +
+->Command `add n/StudyForNextSem s/2018-12-1 9pm e/2018-12-1 10pm rt/WEEKLY ru/2018-12-25 8pm`
+to create a repeat event, this event will trigger Google to create 4 Event Instances
+
+**Step 3** +
+->Command `edit 1 n/change1` +
+Only the first event will be edited, its name will become change1. +
+A command request will be sent to edit the first event instance.
+
+**Step 4** +
+`edit 2 n/change2 -u`+
+The first event is untouched. +
+The event instances from the second one onwards in the same EventSet will be edited, their names will become change2. +
+A command request will be sent to edit the various event instances.
+
+**Step 5** +
+`edit 3 n/change3 -a`+
+All event instances in the same EventSet will be edited, their name will become change3. +
+A command request will be sent to edit the underlying Event, instead of editing individual event instances.
+
+
 === Saving data
 
 . Dealing with missing/corrupted data files
 
 .. _{explain how to simulate a missing/corrupted file and the expected behavior}_
+
 
 _{ more test cases ... }_
