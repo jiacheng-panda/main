@@ -5,6 +5,7 @@ import static seedu.scheduler.logic.parser.CliSyntax.PREFIX_DESCRIPTION;
 import static seedu.scheduler.logic.parser.CliSyntax.PREFIX_END_DATE_TIME;
 import static seedu.scheduler.logic.parser.CliSyntax.PREFIX_EVENT_NAME;
 import static seedu.scheduler.logic.parser.CliSyntax.PREFIX_EVENT_REMINDER_DURATION;
+import static seedu.scheduler.logic.parser.CliSyntax.PREFIX_REMARK;
 import static seedu.scheduler.logic.parser.CliSyntax.PREFIX_REPEAT_TYPE;
 import static seedu.scheduler.logic.parser.CliSyntax.PREFIX_REPEAT_UNTIL_DATE_TIME;
 import static seedu.scheduler.logic.parser.CliSyntax.PREFIX_START_DATE_TIME;
@@ -25,6 +26,7 @@ import seedu.scheduler.model.event.Description;
 import seedu.scheduler.model.event.Event;
 import seedu.scheduler.model.event.EventName;
 import seedu.scheduler.model.event.ReminderDurationList;
+import seedu.scheduler.model.event.Remark;
 import seedu.scheduler.model.event.RepeatType;
 import seedu.scheduler.model.event.Venue;
 import seedu.scheduler.model.tag.Tag;
@@ -65,6 +67,9 @@ public class AddCommandParser implements Parser<AddCommand> {
         Venue venue = argMultimap.getValue(PREFIX_VENUE).isPresent()
                 ? ParserUtil.parseVenue(argMultimap.getValue(PREFIX_VENUE).get())
                 : new Venue("");
+        Remark remark = argMultimap.getValue(PREFIX_REMARK).isPresent()
+                ? ParserUtil.parseRemark(argMultimap.getValue(PREFIX_REMARK).get())
+                : new Remark("");
         RepeatType repeatType = argMultimap.getValue(PREFIX_REPEAT_TYPE).isPresent()
                 ? ParserUtil.parseRepeatType(argMultimap.getValue(PREFIX_REPEAT_TYPE).get())
                 : RepeatType.NONE;
@@ -86,7 +91,7 @@ public class AddCommandParser implements Parser<AddCommand> {
         }
 
         Event event = new Event(UUID.randomUUID(), UUID.randomUUID(), eventName, startDateTime, endDateTime,
-                description, venue, repeatType, repeatUntilDateTime, tags, reminderDurationList);
+                description, venue, remark, repeatType, repeatUntilDateTime, tags, reminderDurationList);
 
         return new AddCommand(event);
     }

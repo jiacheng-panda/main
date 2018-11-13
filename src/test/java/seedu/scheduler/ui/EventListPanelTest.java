@@ -102,6 +102,7 @@ public class EventListPanelTest extends GuiUnitTest {
             builder.append("<description>b</description>\n");
             builder.append("<priority>LOW</priority>\n");
             builder.append("<venue>c</venue>\n");
+            builder.append("<remark></remark>\n");
             builder.append("<repeatType>NONE</repeatType>\n");
             builder.append("<repeatUntilDateTime>2018-09-21T12:00</repeatUntilDateTime>\n");
             builder.append("</events>\n");

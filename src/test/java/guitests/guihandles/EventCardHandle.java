@@ -19,6 +19,7 @@ public class EventCardHandle extends NodeHandle<Node> {
     private static final String START_DATETIME_FIELD_ID = "#startDateTime";
     private static final String END_DATETIME_FIELD_ID = "#endDateTime";
     private static final String VENUE_FIELD_ID = "#venue";
+    private static final String REMARK_FIELD_ID = "#remark";
     private static final String TAGS_FIELD_ID = "#tags";
 
     private final Label idLabel;
@@ -26,6 +27,7 @@ public class EventCardHandle extends NodeHandle<Node> {
     private final Label startDateTimeLabel;
     private final Label endDateTimeLabel;
     private final Label venueLabel;
+    private final Label remarkLabel;
     private final List<Label> tagLabels;
 
     public EventCardHandle(Node cardNode) {
@@ -36,6 +38,7 @@ public class EventCardHandle extends NodeHandle<Node> {
         startDateTimeLabel = getChildNode(START_DATETIME_FIELD_ID);
         endDateTimeLabel = getChildNode(END_DATETIME_FIELD_ID);
         venueLabel = getChildNode(VENUE_FIELD_ID);
+        remarkLabel = getChildNode(REMARK_FIELD_ID);
 
         Region tagsContainer = getChildNode(TAGS_FIELD_ID);
         tagLabels = tagsContainer
@@ -64,6 +67,8 @@ public class EventCardHandle extends NodeHandle<Node> {
     public String getVenue() {
         return venueLabel.getText();
     }
+
+    public String getRemark() { return remarkLabel.getText(); }
 
     public List<String> getTags() {
         return tagLabels

@@ -9,6 +9,7 @@
         <description>F11 Tutorial slot</description>
         <priority>LOW</priority>
         <venue>School of Computing</venue>
+        <remark></remark>
         <repeatType>NONE</repeatType>
         <repeatUntilDateTime>2018-09-21T11:00</repeatUntilDateTime>
         <reminderDurationList>PT15M, PT30M</reminderDurationList>
@@ -22,6 +23,7 @@
         <description></description>
         <priority>NONE</priority>
         <venue></venue>
+        <remark></remark>
         <repeatType>NONE</repeatType>
         <repeatUntilDateTime>2018-10-11T03:00</repeatUntilDateTime>
         <reminderDurationList>PT30M</reminderDurationList>
@@ -35,6 +37,7 @@
         <description></description>
         <priority>NONE</priority>
         <venue></venue>
+        <remark></remark>
         <repeatType>NONE</repeatType>
         <repeatUntilDateTime>2018-10-11T16:00</repeatUntilDateTime>
         <reminderDurationList>NONE</reminderDurationList>

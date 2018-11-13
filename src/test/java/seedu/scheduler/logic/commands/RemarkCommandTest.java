@@ -13,6 +13,7 @@ import static seedu.scheduler.testutil.TypicalEvents.getTypicalScheduler;
 import org.junit.Test;
 
 import seedu.scheduler.logic.CommandHistory;
+import seedu.scheduler.model.event.Remark;
 import seedu.scheduler.model.Model;
 import seedu.scheduler.model.ModelManager;
 import seedu.scheduler.model.UserPrefs;
@@ -26,7 +27,7 @@ public class RemarkCommandTest {
 
     @Test
     public void execute() {
-        final String remark = "Some remark";
+        final Remark remark = new Remark("Some remark");
 
         assertCommandFailure(new RemarkCommand(INDEX_FIRST_EVENT, remark), model, new CommandHistory(),
                 String.format(MESSAGE_ARGUMENTS, INDEX_FIRST_EVENT.getOneBased(), remark));
@@ -34,10 +35,10 @@ public class RemarkCommandTest {
 
     @Test
     public void equals() {
-        final RemarkCommand standardCommand = new RemarkCommand(INDEX_FIRST_EVENT, VALID_REMARK_DISCUSSION);
+        final RemarkCommand standardCommand = new RemarkCommand(INDEX_FIRST_EVENT, new Remark(VALID_REMARK_DISCUSSION));
 
         // same values -> returns true
-        RemarkCommand commandWithSameValues = new RemarkCommand(INDEX_FIRST_EVENT, VALID_REMARK_DISCUSSION);
+        RemarkCommand commandWithSameValues = new RemarkCommand(INDEX_FIRST_EVENT, new Remark(VALID_REMARK_DISCUSSION));
         assertTrue(standardCommand.equals(commandWithSameValues));
 
         // same object -> returns true
@@ -50,9 +51,9 @@ public class RemarkCommandTest {
         assertFalse(standardCommand.equals(new ClearCommand()));
 
         // different index -> returns false
-        assertFalse(standardCommand.equals(new RemarkCommand(INDEX_SECOND_EVENT, VALID_REMARK_DISCUSSION)));
+        assertFalse(standardCommand.equals(new RemarkCommand(INDEX_SECOND_EVENT, new Remark(VALID_REMARK_DISCUSSION))));
 
         // different remark -> returns false
-        assertFalse(standardCommand.equals(new RemarkCommand(INDEX_FIRST_EVENT, VALID_REMARK_INTERVIEW)));
+        assertFalse(standardCommand.equals(new RemarkCommand(INDEX_FIRST_EVENT, new Remark(VALID_REMARK_INTERVIEW))));
     }
 }

@@ -16,6 +16,7 @@ import seedu.scheduler.model.event.DateTime;
 import seedu.scheduler.model.event.Description;
 import seedu.scheduler.model.event.Event;
 import seedu.scheduler.model.event.EventName;
+import seedu.scheduler.model.event.Remark;
 import seedu.scheduler.model.event.ReminderDurationList;
 import seedu.scheduler.model.event.RepeatType;
 import seedu.scheduler.model.event.Venue;
@@ -50,6 +51,9 @@ public class XmlAdaptedEvent {
 
     @XmlElement
     private String venue;
+
+    @XmlElement(required = true)
+    private String remark;
 
     @XmlElement(required = true)
     private RepeatType repeatType;
@@ -107,6 +111,7 @@ public class XmlAdaptedEvent {
         endDateTime = source.getEndDateTime();
         description = source.getDescription().value;
         venue = source.getVenue().value;
+        remark = source.getRemark().value;
         repeatType = source.getRepeatType();
         repeatUntilDateTime = source.getRepeatUntilDateTime();
         tagged = source.getTags().stream()
@@ -169,6 +174,11 @@ public class XmlAdaptedEvent {
         }
         final Venue modelVenue = new Venue(venue);
 
+        if (remark == null) {
+            throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, Remark.class.getSimpleName()));
+        }
+        final Remark modelRemark = new Remark(remark);
+
         if (repeatType == null) {
             throw new IllegalValueException(String.format(
                     MISSING_FIELD_MESSAGE_FORMAT, RepeatType.class.getSimpleName()));
@@ -191,7 +201,7 @@ public class XmlAdaptedEvent {
         final ReminderDurationList modelReminderDurationList = reminderDurationList;
 
         return new Event(modelUid, modelUuid, modelName, modelStartDateTime, modelEndDateTime, modelDescription,
-                modelVenue, modelRepeatType, modelRepeatUntilDateTime, modelTags, modelReminderDurationList);
+                modelVenue, modelRemark, modelRepeatType, modelRepeatUntilDateTime, modelTags, modelReminderDurationList);
     }
 
     @Override

@@ -40,6 +40,7 @@ import seedu.scheduler.model.event.Description;
 import seedu.scheduler.model.event.Event;
 import seedu.scheduler.model.event.EventName;
 import seedu.scheduler.model.event.ReminderDurationList;
+import seedu.scheduler.model.event.Remark;
 import seedu.scheduler.model.event.RepeatType;
 import seedu.scheduler.model.event.Venue;
 import seedu.scheduler.model.tag.Tag;
@@ -200,6 +201,7 @@ public class EditCommand extends Command {
         DateTime updatedEndDateTime = editEventDescriptor.getEndDateTime().orElse(eventToEdit.getEndDateTime());
         Description updatedDescription = editEventDescriptor.getDescription().orElse(eventToEdit.getDescription());
         Venue updatedVenue = editEventDescriptor.getVenue().orElse(eventToEdit.getVenue());
+        Remark updatedRemark = eventToEdit.getRemark(); // edit command does not allow editing remarks
         RepeatType updatedRepeatType = editEventDescriptor.getRepeatType().orElse(eventToEdit.getRepeatType());
         DateTime updatedRepeatUntilDateTime = editEventDescriptor.getRepeatUntilDateTime()
                 .orElse(eventToEdit.getRepeatUntilDateTime());
@@ -216,7 +218,7 @@ public class EditCommand extends Command {
         }
 
         return new Event(eventUid, eventUuid, updatedEventName, updatedStartDateTime, updatedEndDateTime,
-                updatedDescription, updatedVenue, updatedRepeatType, updatedRepeatUntilDateTime, updatedTags,
+                updatedDescription, updatedVenue, updatedRemark, updatedRepeatType, updatedRepeatUntilDateTime, updatedTags,
                 updatedReminderDurationList);
     }
 

@@ -33,6 +33,7 @@ import seedu.scheduler.logic.commands.UndoCommand;
 import seedu.scheduler.logic.parser.exceptions.ParseException;
 import seedu.scheduler.model.event.Event;
 import seedu.scheduler.model.event.EventNameContainsKeywordsPredicate;
+import seedu.scheduler.model.event.Remark;
 import seedu.scheduler.testutil.EditEventDescriptorBuilder;
 import seedu.scheduler.testutil.EventBuilder;
 import seedu.scheduler.testutil.EventUtil;
@@ -80,9 +81,9 @@ public class SchedulerParserTest {
 
     @Test
     public void parseCommand_remark() throws Exception {
-        final String remark = "Some remark.";
+        final Remark remark = new Remark("Some remark.");
         RemarkCommand command = (RemarkCommand) parser.parseCommand(RemarkCommand.COMMAND_WORD + " "
-                + INDEX_FIRST_EVENT.getOneBased() + " " + PREFIX_REMARK + remark);
+                + INDEX_FIRST_EVENT.getOneBased() + " " + PREFIX_REMARK + remark.value);
         assertEquals(new RemarkCommand(INDEX_FIRST_EVENT, remark), command);
     }
 

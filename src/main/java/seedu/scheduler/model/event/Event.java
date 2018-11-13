@@ -31,6 +31,7 @@ public class Event {
     // Data fields
     private final Description description;
     private final Venue venue;
+    private final Remark remark;
     private final RepeatType repeatType;
     private final DateTime repeatUntilDateTime;
     private final Set<Tag> tags = new HashSet<>();
@@ -41,7 +42,7 @@ public class Event {
      * Every field must be present and not null
      */
     public Event(UUID eventUid, UUID eventSetUid, EventName eventName, DateTime startDateTime, DateTime endDateTime,
-                 Description description, Venue venue,
+                 Description description, Venue venue, Remark remark,
                  RepeatType repeatType, DateTime repeatUntilDateTime, Set<Tag> tags,
                  ReminderDurationList reminderDurationList) {
         requireAllNonNull(eventUid, eventSetUid, eventName, startDateTime, endDateTime, description,
@@ -53,6 +54,7 @@ public class Event {
         this.endDateTime = endDateTime;
         this.description = description;
         this.venue = venue;
+        this.remark = remark;
         this.repeatType = repeatType;
         this.repeatUntilDateTime = repeatUntilDateTime;
         this.tags.addAll(tags);
@@ -108,6 +110,8 @@ public class Event {
     public Venue getVenue() {
         return venue;
     }
+
+    public Remark getRemark() { return remark; }
 
     public RepeatType getRepeatType() {
         return repeatType;

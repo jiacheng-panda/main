@@ -8,6 +8,7 @@ import seedu.scheduler.commons.core.index.Index;
 import seedu.scheduler.commons.exceptions.IllegalValueException;
 import seedu.scheduler.logic.commands.RemarkCommand;
 import seedu.scheduler.logic.parser.exceptions.ParseException;
+import seedu.scheduler.model.event.Remark;
 
 /**
  * Parses input arguments and creates a new {@code RemarkCommand} object
@@ -31,6 +32,6 @@ public class RemarkCommandParser implements Parser<RemarkCommand> {
 
         String remark = argMultimap.getValue(PREFIX_REMARK).orElse("");
 
-        return new RemarkCommand(index, remark);
+        return new RemarkCommand(index, new Remark(remark));
     }
 }

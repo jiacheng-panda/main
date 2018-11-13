@@ -9,6 +9,7 @@
         <endDateTime>2018-01-01T17:00</endDateTime>
         <description>Talk about personal problems</description>
         <venue>Jack's House</venue>
+        <remark></remark>
         <repeatType>NONE</repeatType>
         <repeatUntilDateTime>2018-01-01T17:00</repeatUntilDateTime>
         <reminderDurationList>PT15M, PT1H30M</reminderDurationList>
@@ -23,6 +24,7 @@
         <endDateTime>2018-01-02T15:00</endDateTime>
         <description>Interview for position as a software engineer</description>
         <venue>Jane Street</venue>
+        <remark></remark>
         <repeatType>NONE</repeatType>
         <repeatUntilDateTime>2018-01-02T15:00</repeatUntilDateTime>
         <reminderDurationList>PT30M</reminderDurationList>
@@ -37,6 +39,7 @@
         <endDateTime>2018-01-03T11:00</endDateTime>
         <description>Study for MA2101</description>
         <venue>NUS</venue>
+        <remark></remark>
         <repeatType>DAILY</repeatType>
         <repeatUntilDateTime>2018-01-06T11:00</repeatUntilDateTime>
         <reminderDurationList>PT15M, PT30M, PT1H</reminderDurationList>
@@ -51,6 +54,7 @@
         <endDateTime>2018-01-04T11:00</endDateTime>
         <description>Study for MA2101</description>
         <venue>NUS</venue>
+        <remark></remark>
         <repeatType>DAILY</repeatType>
         <repeatUntilDateTime>2018-01-06T11:00</repeatUntilDateTime>
         <reminderDurationList>PT15M, PT30M, PT1H</reminderDurationList>
@@ -65,6 +69,7 @@
         <endDateTime>2018-01-05T11:00</endDateTime>
         <description>Study for MA2101</description>
         <venue>NUS</venue>
+        <remark></remark>
         <repeatType>DAILY</repeatType>
         <repeatUntilDateTime>2018-01-06T11:00</repeatUntilDateTime>
         <reminderDurationList>PT15M, PT30M, PT1H</reminderDurationList>
@@ -79,6 +84,7 @@
         <endDateTime>2018-01-06T11:00</endDateTime>
         <description>Study for MA2101</description>
         <venue>NUS</venue>
+        <remark></remark>
         <repeatType>DAILY</repeatType>
         <repeatUntilDateTime>2018-01-06T11:00</repeatUntilDateTime>
         <reminderDurationList>PT15M, PT30M, PT1H</reminderDurationList>
@@ -93,6 +99,7 @@
         <endDateTime>2018-01-03T12:00</endDateTime>
         <description>Study for CS2103</description>
         <venue>NUS</venue>
+        <remark></remark>
         <repeatType>DAILY</repeatType>
         <repeatUntilDateTime>2018-01-06T12:00</repeatUntilDateTime>
         <reminderDurationList>NONE</reminderDurationList>
@@ -107,6 +114,7 @@
         <endDateTime>2018-01-04T12:00</endDateTime>
         <description>Study for CS2103</description>
         <venue>NUS</venue>
+        <remark></remark>
         <repeatType>DAILY</repeatType>
         <repeatUntilDateTime>2018-01-06T12:00</repeatUntilDateTime>
         <reminderDurationList>NONE</reminderDurationList>
@@ -121,6 +129,7 @@
         <endDateTime>2018-01-05T12:00</endDateTime>
         <description>Study for CS2103</description>
         <venue>NUS</venue>
+        <remark></remark>
         <repeatType>DAILY</repeatType>
         <repeatUntilDateTime>2018-01-06T12:00</repeatUntilDateTime>
         <reminderDurationList>NONE</reminderDurationList>
@@ -135,6 +144,7 @@
         <endDateTime>2018-01-06T12:00</endDateTime>
         <description>Study for CS2103</description>
         <venue>NUS</venue>
+        <remark></remark>
         <repeatType>DAILY</repeatType>
         <repeatUntilDateTime>2018-01-06T12:00</repeatUntilDateTime>
         <reminderDurationList>NONE</reminderDurationList>
@@ -149,6 +159,7 @@
         <endDateTime>2018-03-03T04:00</endDateTime>
         <description>Catch up and dinner with Joe</description>
         <venue>Singapore</venue>
+        <remark></remark>
         <repeatType>WEEKLY</repeatType>
         <repeatUntilDateTime>2018-03-17T04:00</repeatUntilDateTime>
         <reminderDurationList>NONE</reminderDurationList>
@@ -163,6 +174,7 @@
         <endDateTime>2018-03-10T04:00</endDateTime>
         <description>Catch up and dinner with Joe</description>
         <venue>Singapore</venue>
+        <remark></remark>
         <repeatType>WEEKLY</repeatType>
         <repeatUntilDateTime>2018-03-17T04:00</repeatUntilDateTime>
         <reminderDurationList>NONE</reminderDurationList>
@@ -177,6 +189,7 @@
         <endDateTime>2018-03-17T04:00</endDateTime>
         <description>Catch up and dinner with Joe</description>
         <venue>Singapore</venue>
+        <remark></remark>
         <repeatType>WEEKLY</repeatType>
         <repeatUntilDateTime>2018-03-17T04:00</repeatUntilDateTime>
         <reminderDurationList>NONE</reminderDurationList>
@@ -191,6 +204,7 @@
         <endDateTime>2018-12-31T01:00</endDateTime>
         <description>Celebrate Jim's Birthday</description>
         <venue>Jim's House</venue>
+        <remark></remark>
         <repeatType>YEARLY</repeatType>
         <repeatUntilDateTime>2020-12-31T01:00</repeatUntilDateTime>
         <reminderDurationList>PT30M, PT1H30M</reminderDurationList>
@@ -204,6 +218,7 @@
         <endDateTime>2019-12-31T01:00</endDateTime>
         <description>Celebrate Jim's Birthday</description>
         <venue>Jim's House</venue>
+        <remark></remark>
         <repeatType>YEARLY</repeatType>
         <repeatUntilDateTime>2020-12-31T01:00</repeatUntilDateTime>
         <reminderDurationList>PT30M, PT1H30M</reminderDurationList>
@@ -217,6 +232,7 @@
         <endDateTime>2020-12-31T01:00</endDateTime>
         <description>Celebrate Jim's Birthday</description>
         <venue>Jim's House</venue>
+        <remark></remark>
         <repeatType>YEARLY</repeatType>
         <repeatUntilDateTime>2020-12-31T01:00</repeatUntilDateTime>
         <reminderDurationList>PT30M, PT1H30M</reminderDurationList>
@@ -230,6 +246,7 @@
         <endDateTime>2016-02-29T01:00</endDateTime>
         <description>Celebrate a day that happens one in 4 years</description>
         <venue>Marina Bay Sands</venue>
+        <remark></remark>
         <repeatType>YEARLY</repeatType>
         <repeatUntilDateTime>2020-02-29T01:00</repeatUntilDateTime>
         <reminderDurationList>PT15M</reminderDurationList>
@@ -243,6 +260,7 @@
         <endDateTime>2020-02-29T01:00</endDateTime>
         <description>Celebrate a day that happens one in 4 years</description>
         <venue>Marina Bay Sands</venue>
+        <remark></remark>
         <repeatType>YEARLY</repeatType>
         <repeatUntilDateTime>2020-02-29T01:00</repeatUntilDateTime>
         <reminderDurationList>PT15M</reminderDurationList>
@@ -256,6 +274,7 @@
         <endDateTime>2018-01-28T10:00</endDateTime>
         <description>Lecture about entrepreneurship</description>
         <venue>iCube</venue>
+        <remark></remark>
         <repeatType>MONTHLY</repeatType>
         <repeatUntilDateTime>2018-03-28T10:00</repeatUntilDateTime>
         <reminderDurationList>PT15M, PT30M, PT1H, PT1H30M</reminderDurationList>
@@ -271,6 +290,7 @@
         <endDateTime>2018-02-28T10:00</endDateTime>
         <description>Lecture about entrepreneurship</description>
         <venue>iCube</venue>
+        <remark></remark>
         <repeatType>MONTHLY</repeatType>
         <repeatUntilDateTime>2018-03-28T10:00</repeatUntilDateTime>
         <reminderDurationList>PT15M, PT30M, PT1H, PT1H30M</reminderDurationList>
@@ -286,6 +306,7 @@
         <endDateTime>2018-03-28T10:00</endDateTime>
         <description>Lecture about entrepreneurship</description>
         <venue>iCube</venue>
+        <remark></remark>
         <repeatType>MONTHLY</repeatType>
         <repeatUntilDateTime>2018-03-28T10:00</repeatUntilDateTime>
         <reminderDurationList>PT15M, PT30M, PT1H, PT1H30M</reminderDurationList>

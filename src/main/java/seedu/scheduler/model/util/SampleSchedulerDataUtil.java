@@ -16,6 +16,7 @@ import seedu.scheduler.model.event.Description;
 import seedu.scheduler.model.event.Event;
 import seedu.scheduler.model.event.EventName;
 import seedu.scheduler.model.event.ReminderDurationList;
+import seedu.scheduler.model.event.Remark;
 import seedu.scheduler.model.event.RepeatType;
 import seedu.scheduler.model.event.Venue;
 import seedu.scheduler.model.tag.Tag;
@@ -43,6 +44,8 @@ public class SampleSchedulerDataUtil {
             UUID.fromString("066db0fd-0bd2-423f-aef4-fd1f8d30a635"),
             UUID.fromString("066db0fd-0bd2-423f-aef4-fd1f8d30a636")));
 
+    public static final Remark EMPTY_REMARK = new Remark("");
+
     public static Event[] getSampleEvents() {
         return new Event[] {
             new Event(CONSTANT_EVENTUID.get(0),
@@ -52,6 +55,7 @@ public class SampleSchedulerDataUtil {
                     new DateTime(LocalDateTime.of(2018, 1, 1, 17, 0)),
                     new Description("Talk about personal problems"),
                     new Venue("Jack's House"),
+                    EMPTY_REMARK,
                     RepeatType.NONE,
                     new DateTime(LocalDateTime.of(2018, 1, 1, 17, 0)),
                     getTagSet("Talk", "Personal"),
@@ -63,6 +67,7 @@ public class SampleSchedulerDataUtil {
                     new DateTime(LocalDateTime.of(2018, 1, 2, 15, 0)),
                     new Description("Interview for position as a software engineer"),
                     new Venue("Jane Street"),
+                    EMPTY_REMARK,
                     RepeatType.NONE,
                     new DateTime(LocalDateTime.of(2018, 1, 2, 15, 0)),
                     getTagSet("Interview", "Work"),
@@ -74,6 +79,7 @@ public class SampleSchedulerDataUtil {
                     new DateTime(LocalDateTime.of(2018, 1, 3, 11, 0)),
                     new Description("Study for MA2101"),
                     new Venue("NUS"),
+                    EMPTY_REMARK,
                     RepeatType.DAILY,
                     new DateTime(LocalDateTime.of(2018, 1, 6, 11, 0)),
                     getTagSet("Study", "School"),
@@ -96,6 +102,7 @@ public class SampleSchedulerDataUtil {
                     new DateTime(LocalDateTime.of(2018, 3, 3, 4, 0)),
                     new Description("Catch up and dinner with Joe"),
                     new Venue("Singapore"),
+                    EMPTY_REMARK,
                     RepeatType.WEEKLY,
                     new DateTime(LocalDateTime.of(2018, 3, 17, 4, 0)),
                     getTagSet("Relaxation", "Dinner"),
@@ -107,6 +114,7 @@ public class SampleSchedulerDataUtil {
                     new DateTime(LocalDateTime.of(2018, 12, 31, 1, 0)),
                     new Description("Celebrate Jim's Birthday"),
                     new Venue("Jim's House"),
+                    EMPTY_REMARK,
                     RepeatType.YEARLY,
                     new DateTime(LocalDateTime.of(2020, 12, 31, 1, 0)),
                     getTagSet("Celebration"),
@@ -118,6 +126,7 @@ public class SampleSchedulerDataUtil {
                     new DateTime(LocalDateTime.of(2016, 2, 29, 1, 0)),
                     new Description("Celebrate a day that happens one in 4 years"),
                     new Venue("Marina Bay Sands"),
+                    EMPTY_REMARK,
                     RepeatType.YEARLY,
                     new DateTime(LocalDateTime.of(2020, 2, 29, 1, 0)),
                     getTagSet("Celebration"),
@@ -129,6 +138,7 @@ public class SampleSchedulerDataUtil {
                     new DateTime(LocalDateTime.of(2018, 1, 28, 10, 0)),
                     new Description("Lecture about entrepreneurship"),
                     new Venue("iCube"),
+                    EMPTY_REMARK,
                     RepeatType.MONTHLY,
                     new DateTime(LocalDateTime.of(2018, 3, 28, 10, 0)),
                     getTagSet("Timetable", "Study", "School"),

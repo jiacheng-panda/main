@@ -9,6 +9,7 @@ import seedu.scheduler.model.event.DateTime;
 import seedu.scheduler.model.event.Description;
 import seedu.scheduler.model.event.Event;
 import seedu.scheduler.model.event.EventName;
+import seedu.scheduler.model.event.Remark;
 import seedu.scheduler.model.event.ReminderDurationList;
 import seedu.scheduler.model.event.RepeatType;
 import seedu.scheduler.model.event.Venue;
@@ -28,6 +29,7 @@ public class EventBuilder {
             LocalDateTime.of(2018, 9, 21, 18, 0);
     public static final String DEFAULT_DESCRIPTION = "My CS2103 Lecture";
     public static final String DEFAULT_VENUE = "iCube";
+    public static final String DEFAULT_REMARK = "";
     public static final RepeatType DEFAULT_REPEAT_TYPE = RepeatType.NONE;
     public static final LocalDateTime DEFAULT_REPEAT_UNTIL_DATE_TIME =
             LocalDateTime.of(2019, 9, 21, 18, 0);
@@ -39,6 +41,7 @@ public class EventBuilder {
     private DateTime endDateTime;
     private Description description;
     private Venue venue;
+    private Remark remark;
     private RepeatType repeatType;
     private DateTime repeatUntilDateTime;
     private Set<Tag> tags;
@@ -52,6 +55,7 @@ public class EventBuilder {
         endDateTime = new DateTime(DEFAULT_END_DATE_TIME);
         description = new Description(DEFAULT_DESCRIPTION);
         venue = new Venue(DEFAULT_VENUE);
+        remark = new Remark(DEFAULT_REMARK);
         repeatType = DEFAULT_REPEAT_TYPE;
         repeatUntilDateTime = new DateTime(DEFAULT_REPEAT_UNTIL_DATE_TIME);
         tags = new HashSet<>();
@@ -69,6 +73,7 @@ public class EventBuilder {
         endDateTime = eventToCopy.getEndDateTime();
         description = eventToCopy.getDescription();
         venue = eventToCopy.getVenue();
+        remark = eventToCopy.getRemark();
         repeatType = eventToCopy.getRepeatType();
         repeatUntilDateTime = eventToCopy.getRepeatUntilDateTime();
         tags = new HashSet<>(eventToCopy.getTags());
@@ -169,7 +174,7 @@ public class EventBuilder {
      */
     public Event build() {
         return new Event(eventUid, eventSetUid, eventName, startDateTime, endDateTime, description,
-                venue, repeatType, repeatUntilDateTime, tags, reminderDurationList);
+                venue, remark, repeatType, repeatUntilDateTime, tags, reminderDurationList);
     }
 
 }

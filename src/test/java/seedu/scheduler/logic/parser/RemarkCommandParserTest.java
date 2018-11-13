@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import seedu.scheduler.commons.core.index.Index;
 import seedu.scheduler.logic.commands.RemarkCommand;
+import seedu.scheduler.model.event.Remark;
 
 public class RemarkCommandParserTest {
     private RemarkCommandParser parser = new RemarkCommandParser();
@@ -20,12 +21,12 @@ public class RemarkCommandParserTest {
         // have remark
         Index targetIndex = INDEX_FIRST_EVENT;
         String userInput = targetIndex.getOneBased() + " " + PREFIX_REMARK + nonEmptyRemark;
-        RemarkCommand expectedCommand = new RemarkCommand(INDEX_FIRST_EVENT, nonEmptyRemark);
+        RemarkCommand expectedCommand = new RemarkCommand(INDEX_FIRST_EVENT, new Remark(nonEmptyRemark));
         assertParseSuccess(parser, userInput, expectedCommand);
 
         // no remark
         userInput = targetIndex.getOneBased() + " " + PREFIX_REMARK;
-        expectedCommand = new RemarkCommand(INDEX_FIRST_EVENT, "");
+        expectedCommand = new RemarkCommand(INDEX_FIRST_EVENT, new Remark(""));
         assertParseSuccess(parser, userInput, expectedCommand);
     }
 

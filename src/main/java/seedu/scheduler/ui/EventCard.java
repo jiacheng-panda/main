@@ -37,6 +37,8 @@ public class EventCard extends UiPart<Region> {
     @FXML
     private Label venue;
     @FXML
+    private Label remark;
+    @FXML
     private FlowPane tags;
     @FXML
     private Label reminderDurationList;
