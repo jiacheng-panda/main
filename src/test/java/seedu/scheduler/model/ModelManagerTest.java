@@ -3,11 +3,11 @@ package seedu.scheduler.model;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static seedu.scheduler.model.Model.PREDICATE_SHOW_ALL_EVENTS;
 import static seedu.scheduler.logic.commands.CommandTestUtil.VALID_TAG_INTERVIEW;
 import static seedu.scheduler.logic.commands.CommandTestUtil.VALID_TAG_SCHOOL;
 import static seedu.scheduler.logic.commands.CommandTestUtil.VALID_TAG_UNUSED;
 import static seedu.scheduler.logic.commands.CommandTestUtil.VALID_TAG_WORK;
+import static seedu.scheduler.model.Model.PREDICATE_SHOW_ALL_EVENTS;
 import static seedu.scheduler.testutil.TypicalEvents.AD_HOC_WORK;
 import static seedu.scheduler.testutil.TypicalEvents.DISCUSSION_WITH_JACK;
 import static seedu.scheduler.testutil.TypicalEvents.INTERVIEW_WITH_JOHN;
@@ -20,8 +20,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import seedu.scheduler.model.event.EventNameContainsKeywordsPredicate;
 import seedu.scheduler.model.event.Event;
+import seedu.scheduler.model.event.EventNameContainsKeywordsPredicate;
 import seedu.scheduler.model.tag.Tag;
 import seedu.scheduler.testutil.EventBuilder;
 import seedu.scheduler.testutil.SchedulerBuilder;
@@ -57,7 +57,8 @@ public class ModelManagerTest {
 
     @Test
     public void deleteTagNonExistentTagModelUnchanged() throws Exception {
-        Scheduler scheduler = new SchedulerBuilder().withEvent(DISCUSSION_WITH_JACK).withEvent(INTERVIEW_WITH_JOHN).build();
+        Scheduler scheduler = new SchedulerBuilder().withEvent(DISCUSSION_WITH_JACK)
+                .withEvent(INTERVIEW_WITH_JOHN).build();
         UserPrefs userPrefs = new UserPrefs();
 
         ModelManager modelManager = new ModelManager(scheduler, userPrefs);
@@ -68,7 +69,8 @@ public class ModelManagerTest {
 
     @Test
     public void deleteTagTagUsedByMultipleEventsTagRemoved() throws Exception {
-        Scheduler scheduler = new SchedulerBuilder().withEvent(DISCUSSION_WITH_JACK).withEvent(INTERVIEW_WITH_JOHN).build();
+        Scheduler scheduler = new SchedulerBuilder().withEvent(DISCUSSION_WITH_JACK)
+                .withEvent(INTERVIEW_WITH_JOHN).build();
         UserPrefs userPrefs = new UserPrefs();
 
         ModelManager modelManager = new ModelManager(scheduler, userPrefs);
