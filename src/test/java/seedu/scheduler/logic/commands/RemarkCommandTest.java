@@ -4,16 +4,16 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static seedu.scheduler.logic.commands.CommandTestUtil.VALID_REMARK_DISCUSSION;
 import static seedu.scheduler.logic.commands.CommandTestUtil.VALID_REMARK_INTERVIEW;
+import static seedu.scheduler.testutil.TypicalEvents.getTypicalScheduler;
 import static seedu.scheduler.testutil.TypicalIndexes.INDEX_FIRST_EVENT;
 import static seedu.scheduler.testutil.TypicalIndexes.INDEX_SECOND_EVENT;
-import static seedu.scheduler.testutil.TypicalEvents.getTypicalScheduler;
 
 import org.junit.Test;
 
-import seedu.scheduler.model.event.Remark;
 import seedu.scheduler.model.Model;
 import seedu.scheduler.model.ModelManager;
 import seedu.scheduler.model.UserPrefs;
+import seedu.scheduler.model.event.Remark;
 
 /**
  * Contains integration tests (interaction with the Model) and unit tests for RemarkCommand.

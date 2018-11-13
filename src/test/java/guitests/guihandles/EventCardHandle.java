@@ -68,7 +68,9 @@ public class EventCardHandle extends NodeHandle<Node> {
         return venueLabel.getText();
     }
 
-    public String getRemark() { return remarkLabel.getText(); }
+    public String getRemark() {
+        return remarkLabel.getText();
+    }
 
     public List<String> getTags() {
         return tagLabels
@@ -86,7 +88,7 @@ public class EventCardHandle extends NodeHandle<Node> {
                 && getEndDateTime().equals(event.getEndDateTime().getPrettyString())
                 && getVenue().equals(event.getVenue().value)
                 && ImmutableMultiset.copyOf(getTags()).equals(ImmutableMultiset.copyOf(event.getTags().stream()
-                        .map(tag -> tag.tagName)
-                        .collect(Collectors.toList())));
+                .map(tag -> tag.tagName)
+                .collect(Collectors.toList())));
     }
 }
